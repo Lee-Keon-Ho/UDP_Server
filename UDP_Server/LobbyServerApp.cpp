@@ -31,7 +31,7 @@ bool CLobbyServerApp::CreateInstance()
 
 bool CLobbyServerApp::StartInstance()
 {
-	if (!m_pListener->Init("211.218.197.86", 30002)) return false;
+	if (!m_pListener->Init("192.168.123.9", 30002)) return false;
 
 	return true;
 }
