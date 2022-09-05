@@ -1,49 +1,33 @@
+#include "workerThread.h"
 #include "UdpListener.h"
-#include "LobbyServerApp.h"
-#include "PacketHandler.h"
-#include "Lobby.h"
+#include <WS2tcpip.h>
+#include <process.h>
 #include <stdio.h>
 
-CLobbyServerApp::CLobbyServerApp()
+CWorkerThread::CWorkerThread()
 {
 }
 
-CLobbyServerApp::~CLobbyServerApp()
+CWorkerThread::~CWorkerThread()
 {
-	
 }
 
-bool CLobbyServerApp::Initialize()
+bool CWorkerThread::Start()
 {
-	WSADATA wsaData;
-	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-	{
-		printf("Failed WSAStartup()\n");
-		return false;
-	}
-
+	HANDLE handle = (HANDLE)_beginthreadex(NULL, 0, &CWorkerThread::ThreadFunc, this, 0, NULL);
 	return true;
 }
 
-bool CLobbyServerApp::CreateInstance()
+unsigned int _stdcall CWorkerThread::ThreadFunc(void* _pArgs)
 {
-	CUdpListener::GetInstance();
-	CPacketHandler::GetIstance();
+	CWorkerThread* thread = (CWorkerThread*)_pArgs;
 
-	m_pLobby = new CLobby();
-	if (!m_pLobby) return false;
+	thread->RunLoop();
 
-	return true;
+	return 0;
 }
 
-bool CLobbyServerApp::StartInstance()
-{
-	if (!CUdpListener::GetInstance()->Init("211.218.197.86", 30002)) return false;
-	CPacketHandler::GetIstance()->SetLobby(m_pLobby);
-	return true;
-}
-
-void CLobbyServerApp::RunLoop()
+void CWorkerThread::RunLoop()
 {
 	SOCKET socket = CUdpListener::GetInstance()->GetSocket();
 	int recvSize;
@@ -62,7 +46,6 @@ void CLobbyServerApp::RunLoop()
 		}
 
 		// 기존에 있던 주소와 어떻게 비교할 것인가
-		CPacketHandler::GetIstance()->Handle(clientAddr, recvData);
 
 		printf("Socket : %d recv %d message : %s \n", socket, recvSize, recvData);
 		printf("%d %d %d %d : %d\n\n", clientAddr.sin_addr.S_un.S_un_b.s_b1,
@@ -73,10 +56,4 @@ void CLobbyServerApp::RunLoop()
 
 		sendto(socket, recvData, recvSize, 0, (sockaddr*)&clientAddr, clientAddrSize);
 	}
-}
-
-void CLobbyServerApp::DeleteInstance()
-{
-	CUdpListener::DeleteInstance();
-	WSACleanup();
 }

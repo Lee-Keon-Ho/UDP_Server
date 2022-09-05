@@ -1,17 +1,18 @@
 #pragma once
-#include "UdpListener.h"
 #include "App.h"
+
+class CLobby;
 
 class CLobbyServerApp : public CApp
 {
 public:
-	CUdpListener* m_pListener; // listener 보단 socket 같다
+	CLobby* m_pLobby;
 
 public:
 	CLobbyServerApp();
 	~CLobbyServerApp();
 
-protected:
+public:
 	bool Initialize() override;
 	bool CreateInstance() override;
 	bool StartInstance() override;

@@ -140,14 +140,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="LobbyServerApp.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PacketHandler.cpp" />
+    <ClCompile Include="session.cpp" />
     <ClCompile Include="UdpListener.cpp" />
+    <ClCompile Include="workerThread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="Lobby.h" />
     <ClInclude Include="LobbyServerApp.h" />
+    <ClInclude Include="PacketHandler.h" />
+    <ClInclude Include="session.h" />
     <ClInclude Include="UdpListener.h" />
+    <ClInclude Include="workerThread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

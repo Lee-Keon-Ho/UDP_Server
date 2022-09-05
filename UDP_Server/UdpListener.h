@@ -4,15 +4,22 @@
 
 class CUdpListener
 {
-protected:
+private:
+	static CUdpListener* pInstance;
+	CUdpListener();
+	~CUdpListener();
+
+public:
+	static CUdpListener* GetInstance();
+	static void DeleteInstance();
+
+private:
 	SOCKET m_socket;
 	SOCKADDR_IN m_addr;
 
 public:
-	CUdpListener();
-	~CUdpListener();
-
 	bool Init(PCSTR _ip, u_short _port);
 	void Loop();
-	void CloseSocket();
+
+	SOCKET GetSocket() { return m_socket; }
 };

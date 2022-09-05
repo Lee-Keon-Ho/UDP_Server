@@ -33,6 +33,18 @@
     <ClCompile Include="LobbyServerApp.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="session.cpp">
+      <Filter>소스 파일\NetCore</Filter>
+    </ClCompile>
+    <ClCompile Include="workerThread.cpp">
+      <Filter>소스 파일\NetCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Lobby.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketHandler.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -42,6 +54,18 @@
       <Filter>소스 파일\NetCore</Filter>
     </ClInclude>
     <ClInclude Include="LobbyServerApp.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="session.h">
+      <Filter>소스 파일\NetCore</Filter>
+    </ClInclude>
+    <ClInclude Include="workerThread.h">
+      <Filter>소스 파일\NetCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketHandler.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
