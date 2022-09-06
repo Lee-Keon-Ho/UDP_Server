@@ -1,4 +1,5 @@
 #include "PacketHandler.h"
+#include "UdpListener.h"
 #include "Lobby.h"
 
 CPacketHandler* CPacketHandler::pInstance = nullptr;
@@ -16,7 +17,16 @@ int CPacketHandler::Handle(sockaddr_in _addr, char* _buffer)
 
 	if (test == 1)
 	{
-		m_pLobby->push_back(_addr);
+		char buffer[6];
+		char* tempBuffer = buffer;
+		*(USHORT*)tempBuffer = 6;
+		tempBuffer += sizeof(USHORT);
+		*(USHORT*)tempBuffer = 1;
+		tempBuffer += sizeof(USHORT);
+		*(USHORT*)tempBuffer = 1;
+		tempBuffer += sizeof(USHORT);
+
+		sendto(CUdpListener::GetInstance()->GetSocket(), buffer, tempBuffer - buffer, 0, (sockaddr*)&_addr, sizeof(_addr));
 	}
 
 	return 0;
