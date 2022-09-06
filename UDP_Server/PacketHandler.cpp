@@ -12,7 +12,12 @@ int CPacketHandler::Handle(sockaddr_in _addr, char* _buffer)
 {
 	char* tempBuffer = _buffer;
 
-	m_pLobby->push_back(_addr);
+	USHORT test = *(USHORT*)tempBuffer;
+
+	if (test == 1)
+	{
+		m_pLobby->push_back(_addr);
+	}
 
 	return 0;
 }
