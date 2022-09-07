@@ -4,14 +4,15 @@
 class CSession
 {
 protected:
+	WSABUF m_dataBuf;
+	SOCKET m_socket;
 	SOCKADDR_IN m_addr;
+
+	WSAOVERLAPPED m_overlapped;
 
 public:
 	CSession();
-	~CSession();
+	virtual ~CSession();
 
-	bool Compare(SOCKADDR_IN _addr);
 
-	void SetAddr(SOCKADDR_IN _addr);
-	SOCKADDR_IN GetAddr() { return m_addr; }
 };

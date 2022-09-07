@@ -8,4 +8,7 @@ private:
 public:
 	CUserTcpListener();
 	~CUserTcpListener();
+
+	bool OnAssociate();
+	void Recv();
 };

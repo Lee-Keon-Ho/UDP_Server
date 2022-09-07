@@ -42,13 +42,19 @@
     <ClCompile Include="Lobby.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="PacketHandler.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="TcpListener.cpp">
       <Filter>소스 파일\NetCore</Filter>
     </ClCompile>
     <ClCompile Include="UserTcpListener.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCP.cpp">
+      <Filter>소스 파일\NetCore</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketHandler.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,16 +74,22 @@
     <ClInclude Include="workerThread.h">
       <Filter>소스 파일\NetCore</Filter>
     </ClInclude>
-    <ClInclude Include="Lobby.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketHandler.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="TcpListener.h">
       <Filter>소스 파일\NetCore</Filter>
     </ClInclude>
     <ClInclude Include="UserTcpListener.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketHandler.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCP.h">
+      <Filter>소스 파일\NetCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
