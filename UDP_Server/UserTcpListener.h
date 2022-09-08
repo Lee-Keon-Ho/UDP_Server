@@ -1,6 +1,8 @@
 #pragma once
 #include "TcpListener.h"
 
+class CPlayer;
+
 class CUserTcpListener : public CTcpListener
 {
 private:
@@ -10,5 +12,5 @@ public:
 	~CUserTcpListener();
 
 	bool OnAssociate();
-	void Recv();
+	void Recv(CPlayer* _player);
 };

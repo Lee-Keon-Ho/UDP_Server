@@ -2,6 +2,7 @@
 #include <WinSock2.h>
 
 class CLobby;
+class CPlayer;
 
 class CPacketHandler
 {
@@ -16,7 +17,7 @@ private:
 public:
 	void SetLobby(CLobby* _pLobby);
 
-	int Handle(sockaddr_in _addr, char* _buffer);
+	int Handle(CPlayer* _player);
 public:
 	static CPacketHandler* GetIstance();
 	static void DeleteInstance();

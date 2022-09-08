@@ -1,4 +1,5 @@
 #include "TcpListener.h"
+#include "workerThread.h"
 #include <WS2tcpip.h>
 #include <stdio.h>
 
@@ -33,6 +34,16 @@ bool CTcpListener::Init(PCSTR _ip, u_short _port)
 		printf("listen() Error\n");
 		return false;
 	}
+
+	CWorkerThread workerThread;
+
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	for (unsigned int i = 0; i < si.dwNumberOfProcessors * 2; ++i)
+	{
+		workerThread.Start();
+	}
+
 
 	printf("server start\n");
 

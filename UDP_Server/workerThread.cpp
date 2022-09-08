@@ -1,5 +1,6 @@
 #include "workerThread.h"
-#include "UdpListener.h"
+#include "Iocp.h"
+#include "session.h"
 #include <WS2tcpip.h>
 #include <process.h>
 #include <stdio.h>
@@ -29,31 +30,28 @@ unsigned int _stdcall CWorkerThread::ThreadFunc(void* _pArgs)
 
 void CWorkerThread::RunLoop()
 {
-	SOCKET socket = CUdpListener::GetInstance()->GetSocket();
-	int recvSize;
-	char recvData[255];
-	sockaddr_in clientAddr;
-	int clientAddrSize = sizeof(clientAddr);
+	HANDLE hIOCP = CIocp::GetInstance()->GetHandle();
+	DWORD bytesTrans;
+	LPOVERLAPPED overlapped;
+	CSession* pSession;
 
-	while (true)
+	while (1)
 	{
-		recvSize = recvfrom(socket, recvData, sizeof(recvData), 0, (sockaddr*)&clientAddr, &clientAddrSize);
-
-		if (recvSize == -1)
+		if (!GetQueuedCompletionStatus(hIOCP, &bytesTrans, (PULONG_PTR)&pSession, (LPOVERLAPPED*)&overlapped, INFINITE))
 		{
-			printf("recv() Error \n");
-			break;
+			delete pSession;
+			continue;
 		}
 
-		// 기존에 있던 주소와 어떻게 비교할 것인가
+		printf("recv ok %ld : %ld \n", pSession->GetSocket(), bytesTrans);
+		if (bytesTrans == 0)
+		{
+			delete pSession;
+			continue;
+		}
 
-		printf("Socket : %d recv %d message : %s \n", socket, recvSize, recvData);
-		printf("%d %d %d %d : %d\n\n", clientAddr.sin_addr.S_un.S_un_b.s_b1,
-			clientAddr.sin_addr.S_un.S_un_b.s_b2,
-			clientAddr.sin_addr.S_un.S_un_b.s_b3,
-			clientAddr.sin_addr.S_un.S_un_b.s_b4,
-			clientAddr.sin_port);
+		pSession->RecvEvent(bytesTrans);
 
-		sendto(socket, recvData, recvSize, 0, (sockaddr*)&clientAddr, clientAddrSize);
+		pSession->WsaRecv();
 	}
 }

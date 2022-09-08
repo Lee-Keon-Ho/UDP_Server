@@ -1,18 +1,22 @@
 #pragma once
-#include "session.h"
+#include "player.h"
 #include <list>
 
 class CLobby
 {
 public:
-	typedef std::list<CSession*> playerList_t;
+	typedef std::list<CPlayer*> playerList_t;
 
 private:
-	playerList_t m_userList;
+	playerList_t m_playerList;
 
+	CRITICAL_SECTION m_cs_ap;
+	CRITICAL_SECTION m_cs_rp;
+	CRITICAL_SECTION m_cs_ar;
+	CRITICAL_SECTION m_cs_rr;
 public:
 	CLobby();
 	~CLobby();
 
-	void push_back(sockaddr_in _addr);
+	void AddPlayer(CPlayer* _player);
 };

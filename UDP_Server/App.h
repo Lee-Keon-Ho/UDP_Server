@@ -4,7 +4,7 @@ class CApp
 {
 public:
 	CApp();
-	~CApp();
+	virtual ~CApp();
 
 	bool Init();
 	void Run();

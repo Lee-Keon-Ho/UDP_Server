@@ -1,6 +1,7 @@
 #include "PacketHandler.h"
 #include "UdpListener.h"
 #include "Lobby.h"
+#include "PacketType.h"
 
 CPacketHandler* CPacketHandler::pInstance = nullptr;
 
@@ -9,24 +10,32 @@ void CPacketHandler::SetLobby(CLobby* _pLobby)
 	m_pLobby = _pLobby;
 }
 
-int CPacketHandler::Handle(sockaddr_in _addr, char* _buffer)
+int CPacketHandler::Handle(CPlayer* _player)
 {
-	char* tempBuffer = _buffer;
+	CRingBuffer* ringBuffer = _player->GetRingBuffer();
 
-	USHORT test = *(USHORT*)tempBuffer;
+	char* readBuffer = ringBuffer->GetReadBuffer();
+	int read_EndBuf = ringBuffer->GetRemainSize_EndBuffer(readBuffer);
+	int readSize = ringBuffer->GetReadSize();
 
-	if (test == 1)
+	if (readSize > read_EndBuf)
 	{
-		char buffer[6];
-		char* tempBuffer = buffer;
-		*(USHORT*)tempBuffer = 6;
-		tempBuffer += sizeof(USHORT);
-		*(USHORT*)tempBuffer = 1;
-		tempBuffer += sizeof(USHORT);
-		*(USHORT*)tempBuffer = 1;
-		tempBuffer += sizeof(USHORT);
+		char tempBuffer[1000];
+		memcpy(tempBuffer, ringBuffer->GetReadBuffer(), read_EndBuf);
+		memcpy(tempBuffer + read_EndBuf, ringBuffer->GetBuffer(), readSize - read_EndBuf);
+		readBuffer = tempBuffer;
+	}
 
-		sendto(CUdpListener::GetInstance()->GetSocket(), buffer, tempBuffer - buffer, 0, (sockaddr*)&_addr, sizeof(_addr));
+	char* tempBuf = readBuffer;
+	tempBuf += sizeof(USHORT);
+	USHORT type = *(USHORT*)tempBuf;
+	tempBuf += sizeof(USHORT);
+
+	switch (type)
+	{
+	case CS_PT_LOGIN:
+		// 2022-09-08 End
+		break;
 	}
 
 	return 0;
