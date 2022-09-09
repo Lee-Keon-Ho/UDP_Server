@@ -6,12 +6,14 @@ CPlayer::CPlayer()
 
 }
 
-CPlayer::CPlayer(SOCKET _socket, SOCKADDR_IN _addr) : CSession(_socket, _addr)
+CPlayer::CPlayer(SOCKET _socket, SOCKADDR_IN _addr) : CSession(_socket, _addr),
+	m_state(0), m_number(0), m_team(0), m_ready(0), m_boss(0)
 {
 	memset(m_name, 0, PLAYER_NAME_MAX);
 }
 
-CPlayer::CPlayer(SOCKET _socket, SOCKADDR_IN _addr, char* _name) : CSession(_socket, _addr)
+CPlayer::CPlayer(SOCKET _socket, SOCKADDR_IN _addr, char* _name) : CSession(_socket, _addr),
+	m_state(0), m_number(0), m_team(0), m_ready(0), m_boss(0)
 {
 	memcpy(m_name, _name, PLAYER_NAME_MAX);
 }
@@ -19,6 +21,11 @@ CPlayer::CPlayer(SOCKET _socket, SOCKADDR_IN _addr, char* _name) : CSession(_soc
 CPlayer::~CPlayer()
 {
 
+}
+
+void CPlayer::SetPlayerInfo(char* _name)
+{
+	memcpy(m_name, _name, PLAYER_NAME_MAX);
 }
 
 void CPlayer::RecvEvent(int _size)

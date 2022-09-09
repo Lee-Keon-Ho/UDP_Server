@@ -15,9 +15,13 @@ private:
 	CLobby* m_pLobby;
 
 public:
-	void SetLobby(CLobby* _pLobby);
-
 	int Handle(CPlayer* _player);
+
+	void Handle_Login(CPlayer* _player, char* _buffer, USHORT _size);
+	void Handle_Logout(CPlayer* _player);
+	void Handle_PlayerList();
+
+	void SetLobby(CLobby* _pLobby);
 public:
 	static CPacketHandler* GetIstance();
 	static void DeleteInstance();

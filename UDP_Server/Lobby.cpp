@@ -22,3 +22,21 @@ void CLobby::AddPlayer(CPlayer* _player)
 	m_playerList.push_back(_player);
 	LeaveCriticalSection(&m_cs_ap);
 }
+
+void CLobby::RemovePlayer(CPlayer* _player)
+{
+	EnterCriticalSection(&m_cs_rp);
+	m_playerList.remove(_player);
+	LeaveCriticalSection(&m_cs_rp);
+}
+
+void CLobby::SendAll(char* _buffer, int _size)
+{
+	std::list<CPlayer*>::iterator iter = m_playerList.begin();
+	std::list<CPlayer*>::iterator iterEnd = m_playerList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		(*iter)->Send(_buffer, _size);
+	}
+}

@@ -19,4 +19,9 @@ public:
 	~CLobby();
 
 	void AddPlayer(CPlayer* _player);
+	void RemovePlayer(CPlayer* _player);
+
+	void SendAll(char* _buffer, int _size);
+
+	playerList_t GetPlayerList() { return m_playerList; }
 };
