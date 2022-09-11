@@ -33,7 +33,14 @@ public:
 	CRoom(int _num, char* _name, int _nameSize, int _playerCount, int _state);
 	~CRoom();
 
-	void InPlayer(CPlayer* _player);
+	bool InPlayer(CPlayer* _player);
+	bool OutPlayer(CPlayer* _player);
+
+	void SendAll(char* _packet, USHORT _size);
 
 	stRoom* GetRoomInfo() { return &m_room; }
+	player_t GetPlayerList() { return m_player; }
+	int GetNumber() { return m_room.number; }
+	int GetTeamACount() { return m_teamA_Count; }
+	int GetTeamBCount() { return m_teamB_Count; }
 };

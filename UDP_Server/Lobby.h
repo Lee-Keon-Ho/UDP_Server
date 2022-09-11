@@ -22,8 +22,9 @@ public:
 
 	void AddPlayer(CPlayer* _player);
 	void RemovePlayer(CPlayer* _player);
-
 	void AddRoom(CRoom* _room);
+	CRoom* RoomIn(CPlayer* _player, int _num);
+	void RemoveRoom(CRoom* _room);
 
 	void SendAll(char* _buffer, int _size);
 

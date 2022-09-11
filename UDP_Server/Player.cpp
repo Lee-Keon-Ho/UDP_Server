@@ -55,12 +55,46 @@ void CPlayer::SetPlayerInfo(int _number, int _state, int _team)
 	m_team = _team;
 }
 
-void CPlayer::SetPlayerInfo(int _boss)
+void CPlayer::SetRoom(CRoom* _room, int _boss)
+{
+	m_pRoom = _room;
+	m_boss = _boss;
+}
+
+void CPlayer::SetBoss(int _boss)
 {
 	m_boss = _boss;
 }
 
-void CPlayer::SetRoom(CRoom* _room)
+void CPlayer::SetNumber(int _number)
 {
-	m_pRoom = _room;
+	m_number = _number;
+}
+
+void CPlayer::SetState(int _state)
+{
+	m_state = _state;
+}
+
+void CPlayer::SetTeam(int _team)
+{
+	m_team = _team;
+}
+
+void CPlayer::SetReady()
+{
+	if (m_ready == 0) m_ready = 1;
+	else m_ready = 0;
+}
+
+void CPlayer::SetPosition(float* _position)
+{
+	m_position[0] = _position[0];
+	m_position[1] = _position[1];
+	m_position[2] = _position[2];
+}
+
+CRoom* CPlayer::GetRoom()
+{
+	return m_pRoom;
 }

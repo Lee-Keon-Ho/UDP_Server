@@ -37,6 +37,29 @@ void CLobby::AddRoom(CRoom* _room)
 	LeaveCriticalSection(&m_cs_ar);
 }
 
+CRoom* CLobby::RoomIn(CPlayer* _player, int _num)
+{
+	std::list<CRoom*>::iterator iter = m_roomList.begin();
+	std::list<CRoom*>::iterator iterEnd = m_roomList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		if ((*iter)->GetNumber() == _num)
+		{
+			if ((*iter)->InPlayer(_player)) return *iter;
+			else return nullptr;
+		}
+	}
+	return nullptr;
+}
+
+void CLobby::RemoveRoom(CRoom* _room)
+{
+	EnterCriticalSection(&m_cs_rr);
+	m_roomList.remove(_room);
+	LeaveCriticalSection(&m_cs_rr);
+}
+
 void CLobby::SendAll(char* _buffer, int _size)
 {
 	std::list<CPlayer*>::iterator iter = m_playerList.begin();

@@ -23,6 +23,15 @@ public:
 	void Handle_RoomList();
 	void Handle_Chatting(CPlayer* _player, char* _buffer, int _chatSize);
 	void Handle_CreateRoom(CPlayer* _player, char* _buffer, int _size);
+	void Handle_RoomIn(CPlayer* _player, char* _buffer);
+	void Handle_RoomOut(CPlayer* _player);
+	void Handle_RoomState(CPlayer* _player);
+	void Handle_TeamChange(CPlayer* _player, char* _buffer);
+	void Handle_Ready(CPlayer* _player);
+	void Handle_Start(CPlayer* _player);
+	void Handle_PlayerInfo(CPlayer* _player);
+
+	void Test(CPlayer* _player, char* _buffer);
 
 	void SetLobby(CLobby* _pLobby);
 public:

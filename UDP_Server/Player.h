@@ -15,6 +15,7 @@ private:
 	int m_team;
 	int m_ready;
 	int m_boss;
+	float m_position[3];
 
 	CRoom* m_pRoom;
 public:
@@ -27,10 +28,19 @@ public:
 
 	void SetPlayerInfo(char* _name);
 	void SetPlayerInfo(int _number, int _state, int _team);
-	void SetPlayerInfo(int _boss);
-
-	void SetRoom(CRoom* _room);
+	void SetRoom(CRoom* _room, int _boss);
+	void SetBoss(int _boss);
+	void SetNumber(int _number);
+	void SetState(int _state);
+	void SetTeam(int _team);
+	void SetReady();
+	void SetPosition(float* _position);
 
 	char* GetName() { return m_name; }
 	int GetState() { return m_state; }
+	int GetBoss() { return m_boss; }
+	int GetTeam() { return m_team; }
+	int GetReady() { return m_ready; }
+	int GetNumber() { return m_number; }
+	CRoom* GetRoom();
 };
