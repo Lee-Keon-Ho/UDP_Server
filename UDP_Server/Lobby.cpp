@@ -30,6 +30,13 @@ void CLobby::RemovePlayer(CPlayer* _player)
 	LeaveCriticalSection(&m_cs_rp);
 }
 
+void CLobby::AddRoom(CRoom* _room)
+{
+	EnterCriticalSection(&m_cs_ar);
+	m_roomList.remove(_room);
+	LeaveCriticalSection(&m_cs_ar);
+}
+
 void CLobby::SendAll(char* _buffer, int _size)
 {
 	std::list<CPlayer*>::iterator iter = m_playerList.begin();

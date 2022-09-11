@@ -20,6 +20,9 @@ public:
 	void Handle_Login(CPlayer* _player, char* _buffer, USHORT _size);
 	void Handle_Logout(CPlayer* _player);
 	void Handle_PlayerList();
+	void Handle_RoomList();
+	void Handle_Chatting(CPlayer* _player, char* _buffer, int _chatSize);
+	void Handle_CreateRoom(CPlayer* _player, char* _buffer, int _size);
 
 	void SetLobby(CLobby* _pLobby);
 public:

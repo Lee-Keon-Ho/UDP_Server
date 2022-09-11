@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "PacketHandler.h"
+#include "Room.h"
 
 CPlayer::CPlayer()
 {
@@ -23,11 +24,6 @@ CPlayer::~CPlayer()
 
 }
 
-void CPlayer::SetPlayerInfo(char* _name)
-{
-	memcpy(m_name, _name, PLAYER_NAME_MAX);
-}
-
 void CPlayer::RecvEvent(int _size)
 {
 	int readSize;
@@ -45,4 +41,26 @@ void CPlayer::RecvEvent(int _size)
 
 	m_dataBuf.len = m_ringBuffer->GetWriteBufferSize();
 	m_dataBuf.buf = m_ringBuffer->GetWriteBuffer();
+}
+
+void CPlayer::SetPlayerInfo(char* _name)
+{
+	memcpy(m_name, _name, PLAYER_NAME_MAX);
+}
+
+void CPlayer::SetPlayerInfo(int _number, int _state, int _team)
+{
+	m_number = _number;
+	m_state = _state;
+	m_team = _team;
+}
+
+void CPlayer::SetPlayerInfo(int _boss)
+{
+	m_boss = _boss;
+}
+
+void CPlayer::SetRoom(CRoom* _room)
+{
+	m_pRoom = _room;
 }

@@ -38,6 +38,12 @@ int CPacketHandler::Handle(CPlayer* _player)
 	case CS_PT_USERLIST:
 		Handle_PlayerList();
 		break;
+	case CS_PT_ROOMLIST:
+		Handle_RoomList();
+		break;
+	case CS_PT_CHAT:
+
+		break;
 	}
 
 	return 0;
@@ -111,6 +117,97 @@ void CPacketHandler::Handle_PlayerList()
 	}
 
 	m_pLobby->SendAll(sendBuffer, tempBuffer - sendBuffer);
+}
+
+void CPacketHandler::Handle_RoomList()
+{
+	char buffer[1000];
+	char* tempBuffer = buffer;
+
+	CLobby::roomList_t roomList = m_pLobby->GetRoomList();
+
+	int roomSize = roomList.size();
+
+	int len = sizeof(CRoom::stRoom);
+
+	*(USHORT*)tempBuffer = 6 + (len * roomSize);
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = CS_PT_ROOMLIST;
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = roomSize;
+	tempBuffer += sizeof(USHORT);
+
+	std::list<CRoom*>::iterator iter = roomList.begin();
+	std::list<CRoom*>::iterator iterEnd = roomList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		memcpy(tempBuffer, (*iter)->GetRoomInfo(), len);
+		tempBuffer += len;
+	}
+
+	m_pLobby->SendAll(buffer, tempBuffer - buffer);
+}
+
+void CPacketHandler::Handle_Chatting(CPlayer* _player, char* _buffer, int _chatSize)
+{
+	char chatStr[100];
+	memset(chatStr, 0, 100);
+	char* tempBuffer = chatStr;
+
+	int nameSize = strlen(_player->GetName()) * sizeof(USHORT);
+
+	memcpy(tempBuffer, _player->GetName(), nameSize);
+	tempBuffer += nameSize;
+	memcpy(tempBuffer, L" : ", wcslen(L" : ") * sizeof(USHORT));
+	tempBuffer += (wcslen(L" : ") * sizeof(USHORT));
+	memcpy(tempBuffer, _buffer, _chatSize - sizeof(int));
+	tempBuffer += (_chatSize - sizeof(int));
+
+	char sendBuffer[1000];
+	tempBuffer = sendBuffer;
+	*(USHORT*)tempBuffer = sizeof(int) + 100; // 100 chat Size;
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = CS_PT_CHAT;
+	tempBuffer += sizeof(USHORT);
+	memcpy(tempBuffer, chatStr, 100);
+	tempBuffer += 100;
+
+	m_pLobby->SendAll(sendBuffer, tempBuffer - sendBuffer);
+}
+
+void CPacketHandler::Handle_CreateRoom(CPlayer* _player, char* _buffer, int _size)
+{
+	char* tempBuffer = _buffer;
+	int number = m_pLobby->GetRoomSize() + 1;
+	int state = 1;
+	int ok = 0;
+
+	CRoom* room = new CRoom(number, tempBuffer, _size - sizeof(int), 0, state);
+	if (room != nullptr)
+	{
+		_player->SetPlayerInfo(0);
+		_player->SetRoom(room);
+
+		m_pLobby->AddRoom(room);
+		ok = 1;
+	}
+	
+	// Handle_PlayerInfo(_player);
+
+	char sendBuffer[10];
+	tempBuffer = sendBuffer;
+	*(USHORT*)tempBuffer = sizeof(USHORT) + sizeof(USHORT) + sizeof(USHORT);
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = CS_PT_CREATEROOM;
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = ok;
+	tempBuffer += sizeof(USHORT);
+
+	_player->Send(sendBuffer, tempBuffer - sendBuffer);
+
+	//Handle_RoomList();
+	//Handle_RoomState(_player);
 }
 
 CPacketHandler* CPacketHandler::GetIstance()
