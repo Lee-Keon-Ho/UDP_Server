@@ -1,5 +1,6 @@
 #pragma once
 #include "session.h"
+#include "UserUdpListener.h"
 
 #define PLAYER_NAME_MAX 64
 
@@ -18,6 +19,8 @@ private:
 	float m_position[3];
 
 	CRoom* m_pRoom;
+
+	CUserUdpListener* m_pUdpListener;
 public:
 	CPlayer();
 	CPlayer(SOCKET _socket, SOCKADDR_IN _addr);
@@ -25,6 +28,8 @@ public:
 	~CPlayer();
 
 	void RecvEvent(int _size) override;
+
+	bool UdpInit();
 
 	void SetPlayerInfo(char* _name);
 	void SetPlayerInfo(int _number, int _state, int _team);
@@ -34,6 +39,7 @@ public:
 	void SetState(int _state);
 	void SetTeam(int _team);
 	void SetReady();
+	void SetReady(int _ready);
 	void SetPosition(float* _position);
 
 	char* GetName() { return m_name; }

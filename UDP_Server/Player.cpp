@@ -43,6 +43,13 @@ void CPlayer::RecvEvent(int _size)
 	m_dataBuf.buf = m_ringBuffer->GetWriteBuffer();
 }
 
+bool CPlayer::UdpInit()
+{
+	m_pUdpListener = new CUserUdpListener();
+
+	return false;
+}
+
 void CPlayer::SetPlayerInfo(char* _name)
 {
 	memcpy(m_name, _name, PLAYER_NAME_MAX);
@@ -82,6 +89,12 @@ void CPlayer::SetTeam(int _team)
 }
 
 void CPlayer::SetReady()
+{
+	if (m_ready == 0) m_ready = 1;
+	else m_ready = 0;
+}
+
+void CPlayer::SetReady(int _ready)
 {
 	if (m_ready == 0) m_ready = 1;
 	else m_ready = 0;

@@ -63,6 +63,9 @@
     <ClCompile Include="Room.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UserUdpListener.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -106,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="Room.h">
       <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UserUdpListener.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

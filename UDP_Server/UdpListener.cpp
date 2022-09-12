@@ -4,19 +4,6 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
-CUdpListener* CUdpListener::pInstance = nullptr;
-
-CUdpListener* CUdpListener::GetInstance()
-{
-	if (pInstance == nullptr) { pInstance = new CUdpListener(); }
-	return pInstance;
-}
-
-void CUdpListener::DeleteInstance()
-{
-	if (pInstance) { delete pInstance; pInstance = nullptr; }
-}
-
 CUdpListener::CUdpListener()
 {
 
@@ -49,21 +36,20 @@ bool CUdpListener::Init(PCSTR _ip, u_short _port)
 		return false;
 	}
 
-	// thread
+	// udp용 thread 하나만 있으면 되는거 아닌가?
 	CWorkerThread thread;
-	SYSTEM_INFO si;
+	thread.Start(); // 매개 변수로 udp용으로 바꾸는 값을 넣어주면 좋을거 같다.
+	
+	// 기존 tcp 서버는 게임이 끝날때 까지 연관해서는 안된다.
+
+	/*SYSTEM_INFO si;
 	GetSystemInfo(&si);
 	for (unsigned int i = 0; i < si.dwNumberOfProcessors * 2; ++i)
 	{
 		thread.Start();
-	}
+	}*/
 
-	printf("server start...\n");
+	printf("udp server start...\n");
 	
 	return true;
-}
-
-void CUdpListener::Loop()
-{
-	
 }

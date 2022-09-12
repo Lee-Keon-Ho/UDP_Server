@@ -44,7 +44,7 @@ bool CLobbyServerApp::CreateInstance()
 bool CLobbyServerApp::StartInstance()
 {
 	CPacketHandler::GetIstance()->SetLobby(m_pLobby);
-	if (!m_pListener->Init("211.218.197.86", 30002)) return false;
+	if (!m_pListener->Init("211.218.197.152", 30002)) return false;
 
 	return true;
 }

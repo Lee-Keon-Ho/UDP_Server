@@ -97,6 +97,34 @@ bool CRoom::OutPlayer(CPlayer* _player)
 	return true;
 }
 
+void CRoom::OnStart()
+{
+	std::vector<CPlayer*>::iterator iter = m_player.begin();
+	std::vector<CPlayer*>::iterator iterEnd = m_player.end();
+
+	CPlayer* boss = nullptr;
+	bool start = true;
+
+	for (; iter != iterEnd; iter++)
+	{
+		if ((*iter)->GetBoss() == 0)
+		{
+			boss = (*iter);
+		}
+		else
+		{
+			if ((*iter)->GetReady() != 1)
+			{
+				start = false;
+				break;
+			}
+		}
+	}
+
+	if (start) boss->SetReady(1);
+	else boss->SetReady(0);
+}
+
 void CRoom::SendAll(char* _packet, USHORT _size)
 {
 	std::vector<CPlayer*>::iterator iter = m_player.begin();

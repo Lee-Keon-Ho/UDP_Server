@@ -35,6 +35,7 @@ public:
 
 	bool InPlayer(CPlayer* _player);
 	bool OutPlayer(CPlayer* _player);
+	void OnStart();
 
 	void SendAll(char* _packet, USHORT _size);
 
