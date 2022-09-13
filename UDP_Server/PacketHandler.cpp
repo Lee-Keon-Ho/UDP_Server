@@ -362,7 +362,7 @@ void CPacketHandler::Handle_Ready(CPlayer* _player)
 void CPacketHandler::Handle_Start(CPlayer* _player)
 {
 	CRoom* room = _player->GetRoom();
-	CRoom::player_t playerList = room->GetPlayerList();
+	/*CRoom::player_t playerList = room->GetPlayerList();
 	char sendBuffer[1000];
 	char* tempBuffer = sendBuffer;
 
@@ -386,11 +386,34 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 		tempBuffer += sizeof(USHORT);
 		*(USHORT*)tempBuffer = (*iter)->GetNumber();
 		tempBuffer += sizeof(USHORT);
+	}*/
+
+	CRoom::player_t playerList = room->GetPlayerList();
+	char sendBuffer[1000];
+	char* tempBuffer = sendBuffer;
+
+	int size = playerList.size() * sizeof(SOCKADDR_IN);
+
+	*(USHORT*)tempBuffer = 4 + size;
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = CS_PT_START;
+	tempBuffer += sizeof(USHORT);
+
+	std::vector<CPlayer*>::iterator iter = playerList.begin();
+	std::vector<CPlayer*>::iterator iterEnd = playerList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		memcpy(tempBuffer, &(*iter)->GetAddr(), sizeof(SOCKADDR_IN));
+		tempBuffer += sizeof(SOCKADDR_IN); // player number도 필요한가?
 	}
 
-	room->SendAll(sendBuffer, tempBuffer - sendBuffer);
+	room->SendAll(sendBuffer, tempBuffer - sendBuffer); // boss 이면 모두 저장
 
-	room->UdpInit("192.168.123.11", 30001);
+	//room->SendAll(sendBuffer, tempBuffer - sendBuffer); // udp로 전환 하라
+	// peer들의 sockAddr
+
+	//room->UdpInit("192.168.123.11", 30001);
 }
 
 void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)

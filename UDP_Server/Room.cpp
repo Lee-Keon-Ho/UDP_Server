@@ -131,8 +131,6 @@ bool CRoom::UdpInit(PCSTR _ip, u_short _port)
 
 	m_pUdpListener->Init(_ip, _port); // 각 방마다 포트번호가 달라야 한다...
 
-	//SendAll(_ip);
-
 	return true;
 }
 

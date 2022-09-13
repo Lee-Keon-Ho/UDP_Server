@@ -32,7 +32,7 @@ bool CUdpListener::Init(PCSTR _ip, u_short _port)
 	{
 		int err = WSAGetLastError();
 
-		printf("binedingError %d\n", err);
+		printf("bind Error %d\n", err);
 		return false;
 	}
 

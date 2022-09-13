@@ -32,14 +32,11 @@ unsigned int _stdcall CUdpThread::UdpFunc(void* _pArgs)
 
 		if (recvSize == -1)
 		{
-			printf("recv() Error \n");
+			printf("recvfrom() Error \n");
 			break;
 		}
 
-
-
-		printf("recv %d message : %s \n", recvSize, recvData);
-
+		printf("recvfrom %d message : %s \n", recvSize, recvData);
 		
 		//sendAll
 		sendto(socket, recvData, recvSize, 0, (sockaddr*)&clientAddr, clientAddrSize);

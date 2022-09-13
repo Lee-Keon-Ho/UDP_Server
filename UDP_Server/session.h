@@ -23,4 +23,5 @@ public:
 
 	SOCKET GetSocket() { return m_socket; }
 	CRingBuffer* GetRingBuffer() { return m_ringBuffer; }
+	SOCKADDR_IN GetAddr() { return m_addr; }
 };
