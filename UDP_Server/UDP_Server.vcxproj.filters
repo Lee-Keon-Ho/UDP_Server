@@ -66,6 +66,9 @@
     <ClCompile Include="UserUdpListener.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UdpThread.cpp">
+      <Filter>소스 파일\NetCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -107,11 +110,14 @@
     <ClInclude Include="PacketType.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Room.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="UserUdpListener.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UdpThread.h">
+      <Filter>소스 파일\NetCore</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

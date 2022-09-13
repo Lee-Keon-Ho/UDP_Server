@@ -7,7 +7,7 @@ CRoom::CRoom()
 }
 
 CRoom::CRoom(int _num, char* _name, int _nameSize, int _playerCount, int _state)
-	: m_teamA_Count(0), m_teamB_Count(0), m_start(0)
+	: m_teamA_Count(0), m_teamB_Count(0), m_pUdpListener(nullptr)
 {
 	InitializeCriticalSection(&m_cs_ip);
 	InitializeCriticalSection(&m_cs_op);
@@ -123,6 +123,17 @@ void CRoom::OnStart()
 
 	if (start) boss->SetReady(1);
 	else boss->SetReady(0);
+}
+
+bool CRoom::UdpInit(PCSTR _ip, u_short _port)
+{
+	m_pUdpListener = new CUserUdpListener();
+
+	m_pUdpListener->Init(_ip, _port); // 각 방마다 포트번호가 달라야 한다...
+
+	//SendAll(_ip);
+
+	return true;
 }
 
 void CRoom::SendAll(char* _packet, USHORT _size)

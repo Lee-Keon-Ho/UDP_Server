@@ -1,5 +1,5 @@
 #include "UdpListener.h"
-#include "workerThread.h"
+#include "UdpThread.h"
 #include <stdio.h>
 
 #pragma comment(lib, "ws2_32.lib")
@@ -36,18 +36,9 @@ bool CUdpListener::Init(PCSTR _ip, u_short _port)
 		return false;
 	}
 
-	// udp용 thread 하나만 있으면 되는거 아닌가?
-	CWorkerThread thread;
-	thread.Start(); // 매개 변수로 udp용으로 바꾸는 값을 넣어주면 좋을거 같다.
-	
-	// 기존 tcp 서버는 게임이 끝날때 까지 연관해서는 안된다.
+	CUdpThread udp;
 
-	/*SYSTEM_INFO si;
-	GetSystemInfo(&si);
-	for (unsigned int i = 0; i < si.dwNumberOfProcessors * 2; ++i)
-	{
-		thread.Start();
-	}*/
+	udp.Start(m_socket);
 
 	printf("udp server start...\n");
 	

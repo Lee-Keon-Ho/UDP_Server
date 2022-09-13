@@ -43,13 +43,6 @@ void CPlayer::RecvEvent(int _size)
 	m_dataBuf.buf = m_ringBuffer->GetWriteBuffer();
 }
 
-bool CPlayer::UdpInit()
-{
-	m_pUdpListener = new CUserUdpListener();
-
-	return false;
-}
-
 void CPlayer::SetPlayerInfo(char* _name)
 {
 	memcpy(m_name, _name, PLAYER_NAME_MAX);

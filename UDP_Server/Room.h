@@ -1,5 +1,6 @@
 #pragma once
 #include "Player.h"
+#include "UserUdpListener.h"
 #include <vector>
 
 #define ROOM_NAME_MAX 64
@@ -23,11 +24,11 @@ private:
 
 	int m_teamA_Count;
 	int m_teamB_Count;
-	int m_start;
 
 	CRITICAL_SECTION m_cs_ip;
 	CRITICAL_SECTION m_cs_op;
 
+	CUserUdpListener* m_pUdpListener;
 public:
 	CRoom();
 	CRoom(int _num, char* _name, int _nameSize, int _playerCount, int _state);
@@ -36,6 +37,8 @@ public:
 	bool InPlayer(CPlayer* _player);
 	bool OutPlayer(CPlayer* _player);
 	void OnStart();
+
+	bool UdpInit(PCSTR _ip, u_short _port);
 
 	void SendAll(char* _packet, USHORT _size);
 

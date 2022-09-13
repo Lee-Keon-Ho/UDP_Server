@@ -390,7 +390,7 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 
 	room->SendAll(sendBuffer, tempBuffer - sendBuffer);
 
-	
+	room->UdpInit("192.168.123.11", 30001);
 }
 
 void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)
