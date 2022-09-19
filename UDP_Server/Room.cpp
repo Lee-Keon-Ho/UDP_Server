@@ -155,6 +155,7 @@ bool CRoom::CompareAddr(SOCKADDR_IN _addr, int _number)
 		if ((*iter)->GetNumber() == _number)
 		{
 			(*iter)->SetAddr(_addr);
+			(*iter)->SetUdp(true);
 			return true;
 		}
 	}

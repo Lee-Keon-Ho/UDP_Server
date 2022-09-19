@@ -100,6 +100,11 @@ void CPlayer::SetPosition(float* _position)
 	m_position[2] = _position[2];
 }
 
+void CPlayer::SetUdp(bool _bUdp)
+{
+	m_bUdp = true;
+}
+
 CRoom* CPlayer::GetRoom()
 {
 	return m_pRoom;

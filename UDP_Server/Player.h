@@ -37,6 +37,7 @@ public:
 	void SetReady();
 	void SetReady(int _ready);
 	void SetPosition(float* _position);
+	void SetUdp(bool _bUdp);
 
 	char* GetName() { return m_name; }
 	int GetState() { return m_state; }
@@ -44,5 +45,6 @@ public:
 	int GetTeam() { return m_team; }
 	int GetReady() { return m_ready; }
 	int GetNumber() { return m_number; }
+	bool GetUdp() { return m_bUdp; }
 	CRoom* GetRoom();
 };

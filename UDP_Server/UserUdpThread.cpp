@@ -34,6 +34,7 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 
 	int inCount = 0;
 	int playerCount = room->GetPlayerList().size();
+	bool bUdp = false;
 
 	if (inCount == playerCount)
 	{
@@ -55,9 +56,31 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 		char* tempBuffer = recvData;
 
 		int size = *(USHORT*)tempBuffer;
+		tempBuffer += sizeof(USHORT);
 		int number = *(USHORT*)tempBuffer;
 
-		if (room->CompareAddr(clientAddr, number)) inCount += 1; // 나중에 조건 문을 바꾸자
+		if (number == 1)
+		{
+			printf("test\n");
+		}
+
+		if (room->CompareAddr(clientAddr, number))
+		{
+			inCount = 0;
+
+			CRoom::player_t playerList = room->GetPlayerList();
+
+			CRoom::player_t::iterator iter = playerList.begin();
+			CRoom::player_t::iterator iterEnd = playerList.end();
+
+			for (; iter != iterEnd; iter++)
+			{
+				if ((*iter)->GetUdp())
+				{
+					inCount += 1;
+				}
+			}
+		}
 
 		if (inCount == playerCount)
 		{
@@ -86,7 +109,7 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 			for (; iter != iterEnd; iter++)
 			{
 				SOCKADDR_IN addr = (*iter)->GetAddr();
-				sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&addr, sizeof(sockaddr));
+				sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&addr, sizeof(sockaddr_in	));
 			}
 		}
 	}
