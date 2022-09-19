@@ -129,7 +129,7 @@ bool CRoom::UdpInit(PCSTR _ip, u_short _port)
 {
 	m_pUdpListener = new CUserUdpListener();
 
-	m_pUdpListener->Init(_ip, _port); // 각 방마다 포트번호가 달라야 한다...
+	m_pUdpListener->Init(_ip, _port, this); // 각 방마다 포트번호가 달라야 한다...
 
 	return true;
 }
@@ -143,4 +143,20 @@ void CRoom::SendAll(char* _packet, USHORT _size)
 	{
 		(*iter)->Send(_packet, _size);
 	}
+}
+
+bool CRoom::CompareAddr(SOCKADDR_IN _addr, int _number)
+{
+	std::vector<CPlayer*>::iterator iter = m_player.begin();
+	std::vector<CPlayer*>::iterator iterEnd = m_player.end();
+
+	for (iter; iter != iterEnd; iter++)
+	{
+		if ((*iter)->GetNumber() == _number)
+		{
+			(*iter)->SetAddr(_addr);
+			return true;
+		}
+	}
+	return false;
 }

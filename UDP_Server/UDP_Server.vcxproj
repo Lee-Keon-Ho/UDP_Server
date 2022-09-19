@@ -154,6 +154,7 @@
     <ClCompile Include="UdpThread.cpp" />
     <ClCompile Include="UserTcpListener.cpp" />
     <ClCompile Include="UserUdpListener.cpp" />
+    <ClCompile Include="UserUdpThread.cpp" />
     <ClCompile Include="workerThread.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +173,7 @@
     <ClInclude Include="UdpThread.h" />
     <ClInclude Include="UserTcpListener.h" />
     <ClInclude Include="UserUdpListener.h" />
+    <ClInclude Include="UserUdpThread.h" />
     <ClInclude Include="workerThread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

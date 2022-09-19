@@ -33,7 +33,7 @@ void CLobby::RemovePlayer(CPlayer* _player)
 void CLobby::AddRoom(CRoom* _room)
 {
 	EnterCriticalSection(&m_cs_ar);
-	m_roomList.remove(_room);
+	m_roomList.push_back(_room);
 	LeaveCriticalSection(&m_cs_ar);
 }
 

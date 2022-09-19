@@ -224,6 +224,9 @@ void CPacketHandler::Handle_CreateRoom(CPlayer* _player, char* _buffer, int _siz
 		_player->SetRoom(room, 0);
 
 		m_pLobby->AddRoom(room);
+
+		room->InPlayer(_player);
+
 		ok = 1;
 	}
 	
@@ -362,31 +365,6 @@ void CPacketHandler::Handle_Ready(CPlayer* _player)
 void CPacketHandler::Handle_Start(CPlayer* _player)
 {
 	CRoom* room = _player->GetRoom();
-	/*CRoom::player_t playerList = room->GetPlayerList();
-	char sendBuffer[1000];
-	char* tempBuffer = sendBuffer;
-
-	int size = playerList.size() * 4;
-
-	*(USHORT*)tempBuffer = 8 + size;
-	tempBuffer += sizeof(USHORT);
-	*(USHORT*)tempBuffer = CS_PT_START;
-	tempBuffer += sizeof(USHORT);
-	*(USHORT*)tempBuffer = room->GetTeamACount();
-	tempBuffer += sizeof(USHORT);
-	*(USHORT*)tempBuffer = room->GetTeamBCount();
-	tempBuffer += sizeof(USHORT);
-
-	std::vector<CPlayer*>::iterator iter = playerList.begin();
-	std::vector<CPlayer*>::iterator iterEnd = playerList.end();
-
-	for (; iter != iterEnd; iter++)
-	{
-		*(USHORT*)tempBuffer = (*iter)->GetTeam();
-		tempBuffer += sizeof(USHORT);
-		*(USHORT*)tempBuffer = (*iter)->GetNumber();
-		tempBuffer += sizeof(USHORT);
-	}*/
 
 	CRoom::player_t playerList = room->GetPlayerList();
 	char sendBuffer[1000];
@@ -404,16 +382,19 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 
 	for (; iter != iterEnd; iter++)
 	{
-		memcpy(tempBuffer, &(*iter)->GetAddr(), sizeof(SOCKADDR_IN));
+		SOCKADDR_IN addr = (*iter)->GetAddr();
+		memcpy(tempBuffer, &addr, sizeof(SOCKADDR_IN));
 		tempBuffer += sizeof(SOCKADDR_IN); // player number도 필요한가?
 	}
+
+	room->UdpInit("221.144.254.21", 30001);
 
 	room->SendAll(sendBuffer, tempBuffer - sendBuffer); // boss 이면 모두 저장
 
 	//room->SendAll(sendBuffer, tempBuffer - sendBuffer); // udp로 전환 하라
 	// peer들의 sockAddr
 
-	//room->UdpInit("192.168.123.11", 30001);
+	
 }
 
 void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)

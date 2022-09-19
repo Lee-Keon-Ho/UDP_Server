@@ -13,7 +13,7 @@ CUserTcpListener::~CUserTcpListener()
 
 bool CUserTcpListener::OnAssociate()
 {
-	CPlayer* pPlayer = new CPlayer(m_clientSocket, m_addrClient);
+	CPlayer* pPlayer = new CPlayer(m_clientSocket);
 
 	CIocp::GetInstance()->Associate(m_clientSocket, (CSession*)pPlayer);
 

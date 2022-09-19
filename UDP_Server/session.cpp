@@ -5,11 +5,10 @@ CSession::CSession()
 
 }
 
-CSession::CSession(SOCKET _socket, SOCKADDR_IN _addr)
+CSession::CSession(SOCKET _socket)
 {
 	m_ringBuffer = new CRingBuffer(1000);
 	m_socket = _socket;
-	m_addr = _addr;
 	m_dataBuf.buf = m_ringBuffer->GetWriteBuffer();
 	m_dataBuf.len = m_ringBuffer->GetWriteBufferSize();
 }
@@ -47,4 +46,9 @@ bool CSession::Send(char* _buffer, int _size)
 
 void CSession::RecvEvent(int _size)
 {
+}
+
+void CSession::SetAddr(SOCKADDR_IN _addr)
+{
+	m_addr = _addr;
 }

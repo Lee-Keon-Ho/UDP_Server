@@ -14,12 +14,14 @@ protected:
 	CRingBuffer* m_ringBuffer;
 public:
 	CSession();
-	CSession(SOCKET _socket, SOCKADDR_IN _addr);
+	CSession(SOCKET _socket);
 	virtual ~CSession();
 
 	bool WsaRecv();
 	bool Send(char* _buffer, int _size);
 	virtual void RecvEvent(int _size);
+
+	void SetAddr(SOCKADDR_IN _addr);
 
 	SOCKET GetSocket() { return m_socket; }
 	CRingBuffer* GetRingBuffer() { return m_ringBuffer; }

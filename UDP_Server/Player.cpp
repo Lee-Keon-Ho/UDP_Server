@@ -7,14 +7,14 @@ CPlayer::CPlayer()
 
 }
 
-CPlayer::CPlayer(SOCKET _socket, SOCKADDR_IN _addr) : CSession(_socket, _addr),
-	m_state(0), m_number(0), m_team(0), m_ready(0), m_boss(0)
+CPlayer::CPlayer(SOCKET _socket) : CSession(_socket),
+	m_state(0), m_number(0), m_team(0), m_ready(0), m_boss(0), m_bUdp(false)
 {
 	memset(m_name, 0, PLAYER_NAME_MAX);
 }
 
-CPlayer::CPlayer(SOCKET _socket, SOCKADDR_IN _addr, char* _name) : CSession(_socket, _addr),
-	m_state(0), m_number(0), m_team(0), m_ready(0), m_boss(0)
+CPlayer::CPlayer(SOCKET _socket, char* _name) : CSession(_socket),
+	m_state(0), m_number(0), m_team(0), m_ready(0), m_boss(0), m_bUdp(false)
 {
 	memcpy(m_name, _name, PLAYER_NAME_MAX);
 }

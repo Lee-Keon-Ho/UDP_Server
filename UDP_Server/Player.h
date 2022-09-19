@@ -16,12 +16,13 @@ private:
 	int m_ready;
 	int m_boss;
 	float m_position[3];
+	bool m_bUdp;
 
 	CRoom* m_pRoom;
 public:
 	CPlayer();
-	CPlayer(SOCKET _socket, SOCKADDR_IN _addr);
-	CPlayer(SOCKET _socket, SOCKADDR_IN _addr, char* _name);
+	CPlayer(SOCKET _socket);
+	CPlayer(SOCKET _socket, char* _name);
 	~CPlayer();
 
 	void RecvEvent(int _size) override;
