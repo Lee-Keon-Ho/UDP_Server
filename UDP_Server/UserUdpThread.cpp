@@ -25,6 +25,7 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 	int recvSize;
 	char recvData[255];
 	char sendBuffer[255];
+	memset(sendBuffer, 0, 255);
 	stUdp* studp = (stUdp*)_pArgs;
 	SOCKET socket = studp->socket;
 	CRoom* room = studp->room;
@@ -36,11 +37,6 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 	int playerCount = room->GetPlayerList().size();
 	bool bUdp = false;
 
-	if (inCount == playerCount)
-	{
-		// 게임 시작
-	}
-
 	while (true)
 	{
 		recvSize = recvfrom(socket, recvData, sizeof(recvData), 0, (sockaddr*)&clientAddr, &clientAddrSize);
@@ -51,18 +47,17 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 			break;
 		}
 
-		printf("recvfrom %d message : %s \n", recvSize, recvData);
+		for (int i = 0; i < recvSize; i++)
+		{
+			printf("%d ", recvData[i]);
+		}
+		printf("\n");
 
 		char* tempBuffer = recvData;
 
 		int size = *(USHORT*)tempBuffer;
 		tempBuffer += sizeof(USHORT);
 		int number = *(USHORT*)tempBuffer;
-
-		if (number == 1)
-		{
-			printf("test\n");
-		}
 
 		if (room->CompareAddr(clientAddr, number))
 		{
@@ -87,7 +82,7 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 			CRoom::player_t playerList = room->GetPlayerList();
 
 			tempBuffer = sendBuffer;
-			*(USHORT*)tempBuffer = 4 + ((sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)) * inCount);
+			*(USHORT*)tempBuffer = 4 + ((2 + sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)) * inCount);
 			tempBuffer += 2;
 			*(USHORT*)tempBuffer = 1;
 			tempBuffer += 2;
@@ -95,12 +90,16 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 			CRoom::player_t::iterator iter = playerList.begin();
 			CRoom::player_t::iterator iterEnd = playerList.end();
 
-			for (; iter != iterEnd; iter++)
+			for (; iter != iterEnd; iter++) // tcp
 			{
 				SOCKADDR_IN addr = (*iter)->GetAddr();
+				USHORT port = ntohs(addr.sin_port);
+
+				*(USHORT*)tempBuffer = (*iter)->GetNumber();
+				tempBuffer += sizeof(USHORT);
 				memcpy(tempBuffer, &addr.sin_addr, sizeof(addr.sin_addr));
 				tempBuffer += sizeof(addr.sin_addr);
-				memcpy(tempBuffer, &addr.sin_port, sizeof(addr.sin_port));
+				memcpy(tempBuffer, &port, sizeof(port));
 				tempBuffer += sizeof(addr.sin_port);
 			}
 

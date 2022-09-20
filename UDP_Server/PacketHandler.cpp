@@ -376,20 +376,24 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = CS_PT_START;
 	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = room->GetTeamACount();
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = room->GetTeamBCount();
+	tempBuffer += sizeof(USHORT);
 
-	std::vector<CPlayer*>::iterator iter = playerList.begin();
-	std::vector<CPlayer*>::iterator iterEnd = playerList.end();
+	//std::vector<CPlayer*>::iterator iter = playerList.begin();
+	//std::vector<CPlayer*>::iterator iterEnd = playerList.end();
 
-	for (; iter != iterEnd; iter++)
-	{
-		SOCKADDR_IN addr = (*iter)->GetAddr();
-		memcpy(tempBuffer, &addr, sizeof(SOCKADDR_IN));
-		tempBuffer += sizeof(SOCKADDR_IN); // player number도 필요한가?
-	}
-
-	room->UdpInit("221.144.254.21", 30001);
+	//for (; iter != iterEnd; iter++)
+	//{
+	//	SOCKADDR_IN addr = (*iter)->GetAddr();
+	//	memcpy(tempBuffer, &addr, sizeof(SOCKADDR_IN));
+	//	tempBuffer += sizeof(SOCKADDR_IN); // player number도 필요한가?
+	//}
 
 	room->SendAll(sendBuffer, tempBuffer - sendBuffer); // boss 이면 모두 저장
+
+	room->UdpInit("221.144.254.21", 30001);
 
 	//room->SendAll(sendBuffer, tempBuffer - sendBuffer); // udp로 전환 하라
 	// peer들의 sockAddr

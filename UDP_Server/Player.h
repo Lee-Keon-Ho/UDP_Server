@@ -11,7 +11,7 @@ private:
 	char m_name[PLAYER_NAME_MAX];
 
 	int m_state;
-	int m_number;
+	int m_number; // room에서 말고 전체의 id socket 번호를 써도 괜찮다
 	int m_team;
 	int m_ready;
 	int m_boss;
