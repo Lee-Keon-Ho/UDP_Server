@@ -30,9 +30,10 @@ bool CSession::WsaRecv()
 		if (err = WSAGetLastError() != WSA_IO_PENDING)
 		{
 			printf("Error WSARecv : %d \n", err);
+			return false;
 		}
 	}
-	return false;
+	return true;;
 }
 
 bool CSession::Send(char* _buffer, int _size)

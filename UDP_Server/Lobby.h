@@ -12,10 +12,8 @@ private:
 	playerList_t m_playerList;
 	roomList_t m_roomList;
 
-	CRITICAL_SECTION m_cs_ap;
-	CRITICAL_SECTION m_cs_rp;
-	CRITICAL_SECTION m_cs_ar;
-	CRITICAL_SECTION m_cs_rr;
+	CRITICAL_SECTION m_cs_player;
+	CRITICAL_SECTION m_cs_room;
 public:
 	CLobby();
 	~CLobby();

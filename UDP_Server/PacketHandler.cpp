@@ -21,7 +21,6 @@ int CPacketHandler::Handle(CPlayer* _player)
 		readBuffer = tempBuffer;
 	}
 
-	// test
 	for (int i = 0; i < readSize; i++)
 	{
 		printf("%d ", readBuffer[i]);
@@ -381,24 +380,9 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 	*(USHORT*)tempBuffer = room->GetTeamBCount();
 	tempBuffer += sizeof(USHORT);
 
-	//std::vector<CPlayer*>::iterator iter = playerList.begin();
-	//std::vector<CPlayer*>::iterator iterEnd = playerList.end();
-
-	//for (; iter != iterEnd; iter++)
-	//{
-	//	SOCKADDR_IN addr = (*iter)->GetAddr();
-	//	memcpy(tempBuffer, &addr, sizeof(SOCKADDR_IN));
-	//	tempBuffer += sizeof(SOCKADDR_IN); // player number도 필요한가?
-	//}
-
-	room->SendAll(sendBuffer, tempBuffer - sendBuffer); // boss 이면 모두 저장
+	room->SendAll(sendBuffer, tempBuffer - sendBuffer);
 
 	room->UdpInit("221.144.254.21", 30001);
-
-	//room->SendAll(sendBuffer, tempBuffer - sendBuffer); // udp로 전환 하라
-	// peer들의 sockAddr
-
-	
 }
 
 void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)
@@ -418,45 +402,6 @@ void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)
 	tempBuffer += sizeof(USHORT);
 
 	_player->Send(sendBuffer, tempBuffer - sendBuffer);
-}
-
-void CPacketHandler::Test(CPlayer* _player, char* _buffer)
-{
-	char* tempBuffer = _buffer;
-	float position[3];
-	position[0] = *(float*)tempBuffer;;
-	tempBuffer += sizeof(float);
-	position[1] = *(float*)tempBuffer;
-	tempBuffer += sizeof(float);
-	position[2] = *(float*)tempBuffer;
-
-	for (int i = 0; i < 3; i++)
-	{
-		printf("%f", position[i]);
-	}
-	printf("\n");
-
-	_player->SetPosition(position);
-
-	char sendBuffer[100];
-	char* tempBuf = sendBuffer;
-
-	*(USHORT*)tempBuf = 6 + (sizeof(float) * 3);
-	tempBuf += sizeof(USHORT);
-	*(USHORT*)tempBuf = 20;
-	tempBuf += sizeof(USHORT);
-	*(USHORT*)tempBuf = _player->GetNumber();
-	tempBuf += sizeof(USHORT);
-	*(float*)tempBuf = position[0];
-	tempBuf += sizeof(float);
-	*(float*)tempBuf = position[1];
-	tempBuf += sizeof(float);
-	*(float*)tempBuf = position[2];
-	tempBuf += sizeof(float);
-
-	CRoom* room = _player->GetRoom();
-
-	room->SendAll(sendBuffer, tempBuf - sendBuffer);
 }
 
 CPacketHandler* CPacketHandler::GetIstance()

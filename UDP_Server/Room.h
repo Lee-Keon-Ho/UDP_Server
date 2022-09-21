@@ -25,8 +25,7 @@ private:
 	int m_teamA_Count;
 	int m_teamB_Count;
 
-	CRITICAL_SECTION m_cs_ip;
-	CRITICAL_SECTION m_cs_op;
+	CRITICAL_SECTION m_cs_player;
 
 	CUserUdpListener* m_pUdpListener;
 public:

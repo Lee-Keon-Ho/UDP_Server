@@ -9,8 +9,7 @@ CRoom::CRoom()
 CRoom::CRoom(int _num, char* _name, int _nameSize, int _playerCount, int _state)
 	: m_teamA_Count(0), m_teamB_Count(0), m_pUdpListener(nullptr)
 {
-	InitializeCriticalSection(&m_cs_ip);
-	InitializeCriticalSection(&m_cs_op);
+	InitializeCriticalSection(&m_cs_player);
 	memset(m_room.name, 0, ROOM_NAME_MAX);
 	m_room.number = _num;
 	memcpy(m_room.name, _name, _nameSize);
@@ -21,17 +20,17 @@ CRoom::CRoom(int _num, char* _name, int _nameSize, int _playerCount, int _state)
 
 CRoom::~CRoom()
 {
-	DeleteCriticalSection(&m_cs_op);
-	DeleteCriticalSection(&m_cs_ip);
+	DeleteCriticalSection(&m_cs_player);
 }
 
 bool CRoom::InPlayer(CPlayer* _player)
 {
-	EnterCriticalSection(&m_cs_ip);
+	
 	int size = m_player.size();
 
 	if (size < PLAYER_MAX)
 	{
+		EnterCriticalSection(&m_cs_player);
 		if (m_teamA_Count <= m_teamB_Count)
 		{
 			_player->SetPlayerInfo(size + 1, 1, 0);
@@ -45,16 +44,16 @@ bool CRoom::InPlayer(CPlayer* _player)
 
 		m_room.playerCount++;
 		m_player.push_back(_player);
-		LeaveCriticalSection(&m_cs_ip);
+		LeaveCriticalSection(&m_cs_player);
 		return true;
 	}
-	LeaveCriticalSection(&m_cs_ip);
+	LeaveCriticalSection(&m_cs_player);
 	return false;
 }
 
 bool CRoom::OutPlayer(CPlayer* _player)
 {
-	EnterCriticalSection(&m_cs_op);
+	EnterCriticalSection(&m_cs_player);
 	std::vector<CPlayer*>::iterator iter = m_player.begin();
 	std::vector<CPlayer*>::iterator iterEnd = m_player.begin();
 
@@ -91,7 +90,7 @@ bool CRoom::OutPlayer(CPlayer* _player)
 
 	m_room.playerCount--;
 
-	LeaveCriticalSection(&m_cs_op);
+	LeaveCriticalSection(&m_cs_player);
 	if (size == 0) return false;
 
 	return true;
@@ -99,6 +98,7 @@ bool CRoom::OutPlayer(CPlayer* _player)
 
 void CRoom::OnStart()
 {
+	EnterCriticalSection(&m_cs_player);
 	std::vector<CPlayer*>::iterator iter = m_player.begin();
 	std::vector<CPlayer*>::iterator iterEnd = m_player.end();
 
@@ -121,6 +121,8 @@ void CRoom::OnStart()
 		}
 	}
 
+	LeaveCriticalSection(&m_cs_player);
+
 	if (start) boss->SetReady(1);
 	else boss->SetReady(0);
 }
@@ -136,6 +138,7 @@ bool CRoom::UdpInit(PCSTR _ip, u_short _port)
 
 void CRoom::SendAll(char* _packet, USHORT _size)
 {
+	EnterCriticalSection(&m_cs_player);
 	std::vector<CPlayer*>::iterator iter = m_player.begin();
 	std::vector<CPlayer*>::iterator iterEnd = m_player.end();
 
@@ -143,10 +146,12 @@ void CRoom::SendAll(char* _packet, USHORT _size)
 	{
 		(*iter)->Send(_packet, _size);
 	}
+	LeaveCriticalSection(&m_cs_player);
 }
 
 bool CRoom::CompareAddr(SOCKADDR_IN _addr, int _number)
 {
+	EnterCriticalSection(&m_cs_player);
 	std::vector<CPlayer*>::iterator iter = m_player.begin();
 	std::vector<CPlayer*>::iterator iterEnd = m_player.end();
 
@@ -156,8 +161,10 @@ bool CRoom::CompareAddr(SOCKADDR_IN _addr, int _number)
 		{
 			(*iter)->SetAddr(_addr);
 			(*iter)->SetUdp(true);
+			LeaveCriticalSection(&m_cs_player);
 			return true;
 		}
 	}
+	LeaveCriticalSection(&m_cs_player);
 	return false;
 }

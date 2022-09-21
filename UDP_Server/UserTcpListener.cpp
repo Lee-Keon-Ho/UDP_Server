@@ -24,7 +24,7 @@ bool CUserTcpListener::OnAssociate()
 
 void CUserTcpListener::Recv(CPlayer* _player)
 {
-	if (_player->WsaRecv())
+	if (!_player->WsaRecv())
 	{
 		if (WSAGetLastError() != WSA_IO_PENDING)
 		{

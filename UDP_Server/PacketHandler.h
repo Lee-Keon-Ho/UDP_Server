@@ -31,8 +31,6 @@ public:
 	void Handle_Start(CPlayer* _player);
 	void Handle_PlayerInfo(CPlayer* _player);
 
-	void Test(CPlayer* _player, char* _buffer);
-
 	void SetLobby(CLobby* _pLobby);
 public:
 	static CPacketHandler* GetIstance();
