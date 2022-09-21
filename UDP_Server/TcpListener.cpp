@@ -44,7 +44,6 @@ bool CTcpListener::Init(PCSTR _ip, u_short _port)
 		workerThread.Start();
 	}
 
-
 	printf("server start\n");
 
 	return true;
@@ -59,6 +58,7 @@ bool CTcpListener::onAccept()
 	m_clientSocket = accept(m_listenSocket, (sockaddr*)&m_addrClient, &size);
 	if (m_clientSocket == INVALID_SOCKET)
 	{
+		printf("accept Error() \n");
 		return false;
 	}
 

@@ -33,7 +33,7 @@ bool CSession::WsaRecv()
 			return false;
 		}
 	}
-	return true;;
+	return true;
 }
 
 bool CSession::Send(char* _buffer, int _size)

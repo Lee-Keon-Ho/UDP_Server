@@ -60,5 +60,7 @@ void CLobbyServerApp::RunLoop()
 
 void CLobbyServerApp::DeleteInstance()
 {
+	if (m_pLobby) { delete m_pLobby; m_pLobby = nullptr; }
+	if (m_pListener) { delete m_pListener; m_pListener = nullptr; }
 	WSACleanup();
 }
