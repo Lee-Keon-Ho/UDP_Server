@@ -11,6 +11,7 @@ CSession::CSession(SOCKET _socket)
 	m_socket = _socket;
 	m_dataBuf.buf = m_ringBuffer->GetWriteBuffer();
 	m_dataBuf.len = m_ringBuffer->GetWriteBufferSize();
+	memset(&m_addr, 0, sizeof(SOCKADDR_IN));
 }
 
 CSession::~CSession()

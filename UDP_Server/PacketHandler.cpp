@@ -87,19 +87,19 @@ void CPacketHandler::Handle_Login(CPlayer* _player, char* _buffer, USHORT _size)
 {
 	char* tempBuffer = _buffer;
 
-	int nameSize = _size - sizeof(int);
-
 	_player->SetPlayerInfo(tempBuffer);
 
 	m_pLobby->AddPlayer(_player);
 
 	char sendBuffer[10];
 	tempBuffer = sendBuffer;
-	*(USHORT*)tempBuffer = 6; // size
+	*(USHORT*)tempBuffer = 8; // size
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = CS_PT_LOGIN;
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = true;
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = (USHORT)_player->GetSocket();
 	tempBuffer += sizeof(USHORT);
 
 	_player->Send(sendBuffer, tempBuffer - sendBuffer);
@@ -381,8 +381,6 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 	tempBuffer += sizeof(USHORT);
 
 	room->SendAll(sendBuffer, tempBuffer - sendBuffer);
-
-	room->UdpInit("221.144.254.21", 30001);
 }
 
 void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)
@@ -404,6 +402,23 @@ void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)
 	_player->Send(sendBuffer, tempBuffer - sendBuffer);
 }
 
+void CPacketHandler::Handle_SockAddr(CPlayer* _player)
+{
+	char sendBuffer[100];
+	char* tempBuffer = sendBuffer;
+
+	SOCKADDR_IN addr = _player->GetAddr();
+
+	*(USHORT*)tempBuffer = (USHORT)8;
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = 14;
+	tempBuffer += sizeof(USHORT);
+	memcpy(tempBuffer, &addr.sin_addr, sizeof(addr.sin_addr));
+	tempBuffer += sizeof(addr.sin_addr);
+
+	_player->Send(sendBuffer, tempBuffer - sendBuffer);
+}
+
 CPacketHandler* CPacketHandler::GetIstance()
 {
 	if (pInstance == nullptr) { pInstance = new CPacketHandler(); }
@@ -413,6 +428,11 @@ CPacketHandler* CPacketHandler::GetIstance()
 void CPacketHandler::SetLobby(CLobby* _pLobby)
 {
 	m_pLobby = _pLobby;
+}
+
+CLobby* CPacketHandler::GetLobby()
+{
+	return m_pLobby;
 }
 
 void CPacketHandler::DeleteInstance()

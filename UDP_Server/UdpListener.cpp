@@ -35,5 +35,7 @@ bool CUdpListener::Init(PCSTR _ip, u_short _port)
 		return false;
 	}
 	
+
+
 	return true;
 }

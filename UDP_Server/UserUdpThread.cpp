@@ -1,5 +1,7 @@
 #include "UserUdpThread.h"
+#include "Packethandler.h"
 #include "Room.h"
+#include "Lobby.h"
 #include <process.h>
 
 CUserUdpThread::CUserUdpThread()
@@ -30,6 +32,7 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 	SOCKET socket = studp->socket;
 	CRoom* room = studp->room;
 	sockaddr_in clientAddr;
+	CPacketHandler* packetHandler = CPacketHandler::GetIstance();
 	int clientAddrSize = sizeof(clientAddr);
 
 
@@ -39,6 +42,8 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 
 	while (true)
 	{
+		CLobby* pLobby = packetHandler->GetLobby();
+
 		recvSize = recvfrom(socket, recvData, sizeof(recvData), 0, (sockaddr*)&clientAddr, &clientAddrSize);
 
 		if (recvSize == -1)
@@ -52,14 +57,23 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 			printf("%d ", recvData[i]);
 		}
 		printf("\n");
+	
+
+		// peer에 저장된 socket을 보내고 socket을 찾아서 addr값을 저장한다.
+		
+		// udp는 send를 할 이유가 없다.
 
 		char* tempBuffer = recvData;
 
 		int size = *(USHORT*)tempBuffer;
 		tempBuffer += sizeof(USHORT);
-		int number = *(USHORT*)tempBuffer;
+		int socket = *(USHORT*)tempBuffer;
 
-		if (room->CompareAddr(clientAddr, number))
+		CPlayer* pPlayer = pLobby->SearchSocket(socket); // 저장도 해야한다.
+
+		packetHandler->Handle_SockAddr(pPlayer);
+
+		/*if (room->CompareAddr(clientAddr, number))
 		{
 			inCount = 0;
 
@@ -75,42 +89,42 @@ unsigned int _stdcall CUserUdpThread::UdpFunc(void* _pArgs)
 					inCount += 1;
 				}
 			}
-		}
+		}*/
 
-		if (inCount == playerCount)
-		{
-			CRoom::player_t playerList = room->GetPlayerList();
+		//if (inCount == playerCount)
+		//{
+		//	CRoom::player_t playerList = room->GetPlayerList();
 
-			tempBuffer = sendBuffer;
-			*(USHORT*)tempBuffer = 4 + ((2 + sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)) * inCount);
-			tempBuffer += 2;
-			*(USHORT*)tempBuffer = 1;
-			tempBuffer += 2;
+		//	tempBuffer = sendBuffer;
+		//	*(USHORT*)tempBuffer = 4 + ((2 + sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)) * inCount);
+		//	tempBuffer += 2;
+		//	*(USHORT*)tempBuffer = 1;
+		//	tempBuffer += 2;
 
-			CRoom::player_t::iterator iter = playerList.begin();
-			CRoom::player_t::iterator iterEnd = playerList.end();
+		//	CRoom::player_t::iterator iter = playerList.begin();
+		//	CRoom::player_t::iterator iterEnd = playerList.end();
 
-			for (; iter != iterEnd; iter++) // tcp
-			{
-				SOCKADDR_IN addr = (*iter)->GetAddr();
-				USHORT port = ntohs(addr.sin_port);
+		//	for (; iter != iterEnd; iter++) // tcp
+		//	{
+		//		SOCKADDR_IN addr = (*iter)->GetAddr();
+		//		USHORT port = ntohs(addr.sin_port);
 
-				*(USHORT*)tempBuffer = (*iter)->GetNumber();
-				tempBuffer += sizeof(USHORT);
-				memcpy(tempBuffer, &addr.sin_addr, sizeof(addr.sin_addr));
-				tempBuffer += sizeof(addr.sin_addr);
-				memcpy(tempBuffer, &port, sizeof(port));
-				tempBuffer += sizeof(addr.sin_port);
-			}
+		//		*(USHORT*)tempBuffer = (*iter)->GetNumber();
+		//		tempBuffer += sizeof(USHORT);
+		//		memcpy(tempBuffer, &addr.sin_addr, sizeof(addr.sin_addr));
+		//		tempBuffer += sizeof(addr.sin_addr);
+		//		memcpy(tempBuffer, &port, sizeof(port));
+		//		tempBuffer += sizeof(addr.sin_port);
+		//	}
 
-			iter = playerList.begin();
+		//	iter = playerList.begin();
 
-			for (; iter != iterEnd; iter++)
-			{
-				SOCKADDR_IN addr = (*iter)->GetAddr();
-				sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&addr, sizeof(sockaddr_in	));
-			}
-		}
+		//	for (; iter != iterEnd; iter++)
+		//	{
+		//		SOCKADDR_IN addr = (*iter)->GetAddr();
+		//		sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&addr, sizeof(sockaddr_in	));
+		//	}
+		//}
 	}
 
 	// delete stUdp

@@ -30,8 +30,10 @@ public:
 	void Handle_Ready(CPlayer* _player);
 	void Handle_Start(CPlayer* _player);
 	void Handle_PlayerInfo(CPlayer* _player);
+	void Handle_SockAddr(CPlayer* _player);
 
 	void SetLobby(CLobby* _pLobby);
+	CLobby* GetLobby();
 public:
 	static CPacketHandler* GetIstance();
 	static void DeleteInstance();

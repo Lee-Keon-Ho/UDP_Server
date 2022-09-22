@@ -11,7 +11,7 @@ protected:
 
 public:
 	CTcpListener();
-	~CTcpListener();
+	virtual ~CTcpListener();
 
 	bool Init(PCSTR _ip, u_short _port);
 

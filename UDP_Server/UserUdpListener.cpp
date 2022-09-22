@@ -26,4 +26,3 @@ bool CUserUdpListener::Init(PCSTR _ip, u_short _port, CRoom* _room)
 
 	printf("udp server start...\n");
 }
-

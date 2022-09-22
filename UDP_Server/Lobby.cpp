@@ -66,6 +66,22 @@ void CLobby::RemoveRoom(CRoom* _room)
 	LeaveCriticalSection(&m_cs_room);
 }
 
+CPlayer* CLobby::SearchSocket(SOCKET _socket)
+{
+	std::list<CPlayer*>::iterator iter = m_playerList.begin();
+	std::list<CPlayer*>::iterator iterEnd = m_playerList.begin();
+
+	for (; iter != iterEnd; iter++)
+	{
+		if ((*iter)->GetSocket() == _socket)
+		{
+			return *iter;
+		}
+	}
+
+	return nullptr;
+}
+
 void CLobby::SendAll(char* _buffer, int _size)
 {
 	EnterCriticalSection(&m_cs_player);

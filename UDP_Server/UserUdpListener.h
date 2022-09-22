@@ -11,5 +11,5 @@ public:
 	CUserUdpListener();
 	~CUserUdpListener();
 
-	bool Init(PCSTR _ip, u_short _port, CRoom* _room);
+	//bool Init(PCSTR _ip, u_short _port, CRoom* _room);
 };

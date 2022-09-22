@@ -11,6 +11,5 @@ public:
 	CUserTcpListener();
 	~CUserTcpListener();
 
-	bool OnAssociate();
-	void Recv(CPlayer* _player);
+	void OnAssociate();
 };
