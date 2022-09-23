@@ -1,4 +1,5 @@
 #include "UdpListener.h"
+#include "UdpThread.h"
 #include <stdio.h>
 
 #pragma comment(lib, "ws2_32.lib")
@@ -34,8 +35,12 @@ bool CUdpListener::Init(PCSTR _ip, u_short _port)
 		printf("bind Error %d\n", err);
 		return false;
 	}
-	
 
+	CUdpThread udp;
+
+	udp.Start(m_socket);
+
+	printf("udp server start...\n");
 
 	return true;
 }

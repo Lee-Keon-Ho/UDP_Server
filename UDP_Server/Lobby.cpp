@@ -69,7 +69,7 @@ void CLobby::RemoveRoom(CRoom* _room)
 CPlayer* CLobby::SearchSocket(SOCKET _socket)
 {
 	std::list<CPlayer*>::iterator iter = m_playerList.begin();
-	std::list<CPlayer*>::iterator iterEnd = m_playerList.begin();
+	std::list<CPlayer*>::iterator iterEnd = m_playerList.end();
 
 	for (; iter != iterEnd; iter++)
 	{

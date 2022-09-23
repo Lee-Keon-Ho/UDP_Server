@@ -35,7 +35,8 @@ bool CLobbyServerApp::CreateInstance()
 
 	m_pListener = new CUserTcpListener();
 	if (!m_pListener) return false;
-	m_pUdp = new CUserUdpListener();
+	m_pUdp = new CUdpListener();
+	if (!m_pUdp) return false;
 	m_pLobby = new CLobby();
 	if (!m_pLobby) return false;
 
@@ -57,6 +58,11 @@ void CLobbyServerApp::RunLoop()
 	{
 		m_pListener->onAccept();
 		m_pListener->OnAssociate();
+
+		/*CPlayer* pPlayer = new CPlayer(m_clientSocket);
+		CIocp::GetInstance()->Associate(m_clientSocket, (CSession*)pPlayer);
+		if (!pPlayer->WsaRecv())*/
+
 	}
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "App.h"
 #include "UserTcpListener.h"
-#include "UserUdpListener.h"
+#include "UdpListener.h"
 
 class CLobby;
 
@@ -9,7 +9,7 @@ class CLobbyServerApp : public CApp
 {
 public:
 	CUserTcpListener* m_pListener;
-	CUserUdpListener* m_pUdp;
+	CUdpListener* m_pUdp;
 	CLobby* m_pLobby;
 
 public:

@@ -54,11 +54,15 @@ bool CRoom::OutPlayer(CPlayer* _player)
 {
 	EnterCriticalSection(&m_cs_player);
 	std::vector<CPlayer*>::iterator iter = m_player.begin();
-	std::vector<CPlayer*>::iterator iterEnd = m_player.begin();
+	std::vector<CPlayer*>::iterator iterEnd = m_player.end();
 
 	for (; iter != iterEnd; iter++)
 	{
-		if ((*iter) == _player) m_player.erase(iter);
+		if ((*iter) == _player)
+		{
+			m_player.erase(iter);
+			break;
+		}
 	}
 
 	int size = m_player.size();

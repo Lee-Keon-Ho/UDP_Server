@@ -23,7 +23,7 @@ public:
 	void AddRoom(CRoom* _room);
 	CRoom* RoomIn(CPlayer* _player, int _num);
 	void RemoveRoom(CRoom* _room);
-	CPlayer* SearchSocket(SOCKET _socket);
+	CPlayer* SearchSocket(SOCKET _socket); // 조금 더 생각해보자.
 
 	void SendAll(char* _buffer, int _size);
 

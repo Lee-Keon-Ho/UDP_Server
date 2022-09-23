@@ -126,7 +126,8 @@ void CPacketHandler::Handle_PlayerList()
 	char sendBuffer[2000];
 	char* tempBuffer = sendBuffer;
 
-	CLobby::playerList_t playerList = m_pLobby->GetPlayerList();
+	// 최우선 과제 완료 후 처리 보이는 만큼만
+	CLobby::playerList_t playerList = m_pLobby->GetPlayerList(); 
 
 	int listSize = playerList.size();
 
