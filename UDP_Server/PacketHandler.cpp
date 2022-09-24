@@ -420,6 +420,16 @@ void CPacketHandler::Handle_SockAddr(CPlayer* _player)
 	_player->Send(sendBuffer, tempBuffer - sendBuffer);
 }
 
+void CPacketHandler::Test(CPlayer* _player)
+{
+	CRoom* room = _player->GetRoom();
+
+	if (room->AllAddress())
+	{
+		//room->SendAll()
+	}
+}
+
 CPacketHandler* CPacketHandler::GetIstance()
 {
 	if (pInstance == nullptr) { pInstance = new CPacketHandler(); }

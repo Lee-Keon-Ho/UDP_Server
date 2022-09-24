@@ -162,3 +162,25 @@ bool CRoom::CompareAddr(SOCKADDR_IN _addr, int _number)
 	LeaveCriticalSection(&m_cs_player);
 	return false;
 }
+
+bool CRoom::AllAddress()
+{
+	int count = 0;
+	EnterCriticalSection(&m_cs_player);
+	std::vector<CPlayer*>::iterator iter = m_player.begin();
+	std::vector<CPlayer*>::iterator iterEnd = m_player.end();
+
+	for (iter; iter != iterEnd; iter++)
+	{
+		if ((*iter)->GetUdp())
+		{
+			count++;
+		}
+	}
+
+	LeaveCriticalSection(&m_cs_player);
+
+	if (count == m_room.playerCount) return true;
+	
+	return false;
+}

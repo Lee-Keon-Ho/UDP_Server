@@ -32,6 +32,8 @@ public:
 	void Handle_PlayerInfo(CPlayer* _player);
 	void Handle_SockAddr(CPlayer* _player);
 
+	void Test(CPlayer* _player);
+
 	void SetLobby(CLobby* _pLobby);
 	CLobby* GetLobby();
 public:

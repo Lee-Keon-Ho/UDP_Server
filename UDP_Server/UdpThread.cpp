@@ -43,16 +43,18 @@ void CUdpThread::RunLoop()
 	//int playerCount = room->GetPlayerList().size();
 	bool bUdp = false;
 
+	SOCKET socket = m_socket;
+
 	while (true)
 	{
 		CLobby* pLobby = packetHandler->GetLobby();
 
-		recvSize = recvfrom(m_socket, recvData, sizeof(recvData), 0, (sockaddr*)&clientAddr, &clientAddrSize);
+		recvSize = recvfrom(socket, recvData, sizeof(recvData), 0, (sockaddr*)&clientAddr, &clientAddrSize);
 
 		if (recvSize == -1)
 		{
 			printf("recvfrom() Error \n");
-			break;
+			//break;
 		}
 
 		for (int i = 0; i < recvSize; i++)
@@ -75,6 +77,7 @@ void CUdpThread::RunLoop()
 		pPlayer->SetAddr(clientAddr);
 
 		packetHandler->Handle_SockAddr(pPlayer);
+		packetHandler->
 
 		/*if (room->CompareAddr(clientAddr, number))
 		{

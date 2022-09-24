@@ -37,6 +37,7 @@ public:
 	void SendAll(char* _packet, USHORT _size);
 
 	bool CompareAddr(SOCKADDR_IN _addr, int _number);
+	bool AllAddress();
 
 	stRoom* GetRoomInfo() { return &m_room; }
 	player_t GetPlayerList() { return m_player; }
