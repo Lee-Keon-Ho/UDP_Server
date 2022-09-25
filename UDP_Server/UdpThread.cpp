@@ -77,7 +77,6 @@ void CUdpThread::RunLoop()
 		pPlayer->SetAddr(clientAddr);
 
 		packetHandler->Handle_SockAddr(pPlayer);
-		packetHandler->
 
 		/*if (room->CompareAddr(clientAddr, number))
 		{

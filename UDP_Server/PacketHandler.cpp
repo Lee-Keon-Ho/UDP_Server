@@ -414,8 +414,8 @@ void CPacketHandler::Handle_SockAddr(CPlayer* _player)
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = 14;
 	tempBuffer += sizeof(USHORT);
-	memcpy(tempBuffer, &addr.sin_addr, sizeof(addr.sin_addr));
-	tempBuffer += sizeof(addr.sin_addr);
+	memcpy(tempBuffer, &addr.sin_addr, sizeof(addr.sin_addr.S_un.S_addr));
+	tempBuffer += sizeof(addr.sin_addr.S_un.S_addr);
 
 	_player->Send(sendBuffer, tempBuffer - sendBuffer);
 }
@@ -426,7 +426,66 @@ void CPacketHandler::Test(CPlayer* _player)
 
 	if (room->AllAddress())
 	{
-		//room->SendAll()
+		if (_player->GetBoss() == 0) // UdpThread에서 처리하면 될 것 같다.
+		{
+			char sendBuffer[200];
+			char* tempBuffer = sendBuffer;
+
+			CRoom::player_t players = room->GetPlayerList();
+			std::vector<CPlayer*>::iterator iter = players.begin();
+			std::vector<CPlayer*>::iterator iterEnd = players.end();
+
+			*(USHORT*)tempBuffer = 8 + (sizeof(SOCKADDR) + sizeof(SOCKET) * players.size());
+			tempBuffer += sizeof(USHORT);
+			*(USHORT*)tempBuffer = 15;
+			tempBuffer += sizeof(USHORT);
+			*(USHORT*)tempBuffer = players.size();
+			tempBuffer += sizeof(USHORT);
+			*(USHORT*)tempBuffer = 0; // boss == 0;
+			tempBuffer += sizeof(USHORT);
+
+			for (; iter != iterEnd; iter++)
+			{
+				SOCKADDR_IN addr = (*iter)->GetAddr();
+				*(UINT*)tempBuffer = (*iter)->GetSocket();
+				tempBuffer += sizeof(UINT);
+				*(UINT*)tempBuffer = addr.sin_addr.S_un.S_addr;
+				tempBuffer += sizeof(UINT);
+			}
+
+			room->SendAll(sendBuffer, tempBuffer - sendBuffer);
+		}
+		else
+		{
+			char sendBuffer[200];
+			char* tempBuffer = sendBuffer;
+
+			CRoom::player_t players = room->GetPlayerList();
+			std::vector<CPlayer*>::iterator iter = players.begin();
+			std::vector<CPlayer*>::iterator iterEnd = players.end();
+
+			*(USHORT*)tempBuffer = 6 + (sizeof(SOCKADDR) + sizeof(SOCKET));
+			tempBuffer += sizeof(USHORT);
+			*(USHORT*)tempBuffer = 15;
+			tempBuffer += sizeof(USHORT);
+			*(USHORT*)tempBuffer = 1; // boss가 아니면 1
+			tempBuffer += sizeof(USHORT);
+
+			for (; iter != iterEnd; iter++)
+			{
+				if ((*iter)->GetBoss() == 0)
+				{
+					SOCKADDR_IN addr = (*iter)->GetAddr();
+					*(UINT*)tempBuffer = (*iter)->GetSocket();
+					tempBuffer += sizeof(UINT);
+					*(UINT*)tempBuffer = addr.sin_addr.S_un.S_addr;
+					tempBuffer += sizeof(UINT);
+					break;
+				}
+			}
+
+			_player->Send(sendBuffer, tempBuffer - sendBuffer);
+		}
 	}
 }
 
