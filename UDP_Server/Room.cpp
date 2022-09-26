@@ -143,26 +143,6 @@ void CRoom::SendAll(char* _packet, USHORT _size)
 	LeaveCriticalSection(&m_cs_player);
 }
 
-bool CRoom::CompareAddr(SOCKADDR_IN _addr, int _number)
-{
-	EnterCriticalSection(&m_cs_player);
-	std::vector<CPlayer*>::iterator iter = m_player.begin();
-	std::vector<CPlayer*>::iterator iterEnd = m_player.end();
-
-	for (iter; iter != iterEnd; iter++)
-	{
-		if ((*iter)->GetNumber() == _number)
-		{
-			(*iter)->SetAddr(_addr);
-			(*iter)->SetUdp(true);
-			LeaveCriticalSection(&m_cs_player);
-			return true;
-		}
-	}
-	LeaveCriticalSection(&m_cs_player);
-	return false;
-}
-
 bool CRoom::AllAddress()
 {
 	int count = 0;

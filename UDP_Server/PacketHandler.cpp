@@ -372,14 +372,14 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 
 	int size = playerList.size() * sizeof(SOCKADDR_IN);
 
-	*(USHORT*)tempBuffer = 4 + size;
+	*(USHORT*)tempBuffer = 4;
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = CS_PT_START;
 	tempBuffer += sizeof(USHORT);
-	*(USHORT*)tempBuffer = room->GetTeamACount();
+	/**(USHORT*)tempBuffer = room->GetTeamACount();
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = room->GetTeamBCount();
-	tempBuffer += sizeof(USHORT);
+	tempBuffer += sizeof(USHORT);*/
 
 	room->SendAll(sendBuffer, tempBuffer - sendBuffer);
 }
@@ -435,13 +435,13 @@ void CPacketHandler::Test(CPlayer* _player)
 			std::vector<CPlayer*>::iterator iter = players.begin();
 			std::vector<CPlayer*>::iterator iterEnd = players.end();
 
-			*(USHORT*)tempBuffer = 8 + (sizeof(SOCKADDR) + sizeof(SOCKET) * players.size());
+			*(USHORT*)tempBuffer = 8 + (sizeof(UINT) + sizeof(UINT) * players.size());
 			tempBuffer += sizeof(USHORT);
 			*(USHORT*)tempBuffer = 15;
 			tempBuffer += sizeof(USHORT);
-			*(USHORT*)tempBuffer = players.size();
-			tempBuffer += sizeof(USHORT);
 			*(USHORT*)tempBuffer = 0; // boss == 0;
+			tempBuffer += sizeof(USHORT);
+			*(USHORT*)tempBuffer = players.size();
 			tempBuffer += sizeof(USHORT);
 
 			for (; iter != iterEnd; iter++)
@@ -453,7 +453,7 @@ void CPacketHandler::Test(CPlayer* _player)
 				tempBuffer += sizeof(UINT);
 			}
 
-			room->SendAll(sendBuffer, tempBuffer - sendBuffer);
+			_player->Send(sendBuffer, tempBuffer - sendBuffer);
 		}
 		else
 		{

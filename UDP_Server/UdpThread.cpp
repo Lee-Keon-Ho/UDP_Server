@@ -31,6 +31,7 @@ unsigned int _stdcall CUdpThread::UdpFunc(void* _pArgs)
 void CUdpThread::RunLoop()
 {
 	int recvSize;
+	int sendSize;
 	char recvData[255];
 	char sendBuffer[255];
 	memset(sendBuffer, 0, 255);
@@ -51,22 +52,35 @@ void CUdpThread::RunLoop()
 
 		recvSize = recvfrom(socket, recvData, sizeof(recvData), 0, (sockaddr*)&clientAddr, &clientAddrSize);
 
-		if (recvSize == -1)
+		char* tempBuffer = sendBuffer;
+
+		if (recvSize == -1) // 우선 여기다 test 하지만 여기가 아니다
 		{
 			printf("recvfrom() Error \n");
-			//break;
+
+			*(USHORT*)tempBuffer = 0;
+			tempBuffer += sizeof(USHORT);
+		}
+		else
+		{
+
+			for (int i = 0; i < recvSize; i++)
+			{
+				printf("%d ", recvData[i]);
+			}
+			printf("\n");
+
+			*(USHORT*)tempBuffer = 1;
+			tempBuffer += sizeof(USHORT);
 		}
 
-		for (int i = 0; i < recvSize; i++)
-		{
-			printf("%d ", recvData[i]);
-		}
-		printf("\n");
+		sendSize = sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&clientAddr, clientAddrSize);
+		
 
 		// peer에 저장된 socket을 보내고 socket을 찾아서 addr값을 저장한다.
 		// udp는 send를 할 이유가 없다.
 
-		char* tempBuffer = recvData;
+		tempBuffer = recvData;
 
 		int size = *(USHORT*)tempBuffer;
 		tempBuffer += sizeof(USHORT);
@@ -75,9 +89,11 @@ void CUdpThread::RunLoop()
 		CPlayer* pPlayer = pLobby->SearchSocket(socket);
 
 		pPlayer->SetAddr(clientAddr);
+		pPlayer->SetUdp(true);
 
 		packetHandler->Handle_SockAddr(pPlayer);
 
+		packetHandler->Test(pPlayer);
 		/*if (room->CompareAddr(clientAddr, number))
 		{
 			inCount = 0;
