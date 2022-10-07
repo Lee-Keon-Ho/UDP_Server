@@ -52,101 +52,34 @@ void CUdpThread::RunLoop()
 
 		recvSize = recvfrom(socket, recvData, sizeof(recvData), 0, (sockaddr*)&clientAddr, &clientAddrSize);
 
-		char* tempBuffer = sendBuffer;
-
 		if (recvSize == -1) // 우선 여기다 test 하지만 여기가 아니다
 		{
 			printf("recvfrom() Error \n");
-
-			*(USHORT*)tempBuffer = 0;
-			tempBuffer += sizeof(USHORT);
-		}
-		else
-		{
-
-			for (int i = 0; i < recvSize; i++)
-			{
-				printf("%d ", recvData[i]);
-			}
-			printf("\n");
-
-			*(USHORT*)tempBuffer = 1;
-			tempBuffer += sizeof(USHORT);
 		}
 
-		sendSize = sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&clientAddr, clientAddrSize);
-		
-
-		// peer에 저장된 socket을 보내고 socket을 찾아서 addr값을 저장한다.
-		// udp는 send를 할 이유가 없다.
-
-		tempBuffer = recvData;
+		char* tempBuffer = recvData;
 
 		int size = *(USHORT*)tempBuffer;
 		tempBuffer += sizeof(USHORT);
-		int socket = *(USHORT*)tempBuffer;
+		int type = *(USHORT*)tempBuffer;
+		tempBuffer += sizeof(USHORT);
+		int clientSocket = *(USHORT*)tempBuffer;0.
 
-		CPlayer* pPlayer = pLobby->SearchSocket(socket);
+		CPlayer* pPlayer = pLobby->SearchSocket(clientSocket);
 
 		pPlayer->SetAddr(clientAddr);
 		pPlayer->SetUdp(true);
 
-		packetHandler->Handle_SockAddr(pPlayer);
+		tempBuffer = sendBuffer;
+		*(USHORT*)tempBuffer = 4;
+		tempBuffer += sizeof(USHORT);
+		*(USHORT*)tempBuffer = 1;
+		tempBuffer += sizeof(USHORT);
+
+		sendSize = sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&clientAddr, clientAddrSize);
+
+		packetHandler->Handle_SockAddr(pPlayer); // 수정
 
 		packetHandler->Test(pPlayer);
-		/*if (room->CompareAddr(clientAddr, number))
-		{
-			inCount = 0;
-
-			CRoom::player_t playerList = room->GetPlayerList();
-
-			CRoom::player_t::iterator iter = playerList.begin();
-			CRoom::player_t::iterator iterEnd = playerList.end();
-
-			for (; iter != iterEnd; iter++)
-			{
-				if ((*iter)->GetUdp())
-				{
-					inCount += 1;
-				}
-			}
-		}*/
-
-		//if (inCount == playerCount)
-		//{
-		//	CRoom::player_t playerList = room->GetPlayerList();
-
-		//	tempBuffer = sendBuffer;
-		//	*(USHORT*)tempBuffer = 4 + ((2 + sizeof(clientAddr.sin_addr) + sizeof(clientAddr.sin_port)) * inCount);
-		//	tempBuffer += 2;
-		//	*(USHORT*)tempBuffer = 1;
-		//	tempBuffer += 2;
-
-		//	CRoom::player_t::iterator iter = playerList.begin();
-		//	CRoom::player_t::iterator iterEnd = playerList.end();
-
-		//	for (; iter != iterEnd; iter++) // tcp
-		//	{
-		//		SOCKADDR_IN addr = (*iter)->GetAddr();
-		//		USHORT port = ntohs(addr.sin_port);
-
-		//		*(USHORT*)tempBuffer = (*iter)->GetNumber();
-		//		tempBuffer += sizeof(USHORT);
-		//		memcpy(tempBuffer, &addr.sin_addr, sizeof(addr.sin_addr));
-		//		tempBuffer += sizeof(addr.sin_addr);
-		//		memcpy(tempBuffer, &port, sizeof(port));
-		//		tempBuffer += sizeof(addr.sin_port);
-		//	}
-
-		//	iter = playerList.begin();
-
-		//	for (; iter != iterEnd; iter++)
-		//	{
-		//		SOCKADDR_IN addr = (*iter)->GetAddr();
-		//		sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&addr, sizeof(sockaddr_in	));
-		//	}
-		//}
 	}
-
-	// delete stUdp
 }

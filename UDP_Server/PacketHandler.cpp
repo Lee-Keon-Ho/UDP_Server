@@ -376,10 +376,6 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = CS_PT_START;
 	tempBuffer += sizeof(USHORT);
-	/**(USHORT*)tempBuffer = room->GetTeamACount();
-	tempBuffer += sizeof(USHORT);
-	*(USHORT*)tempBuffer = room->GetTeamBCount();
-	tempBuffer += sizeof(USHORT);*/
 
 	room->SendAll(sendBuffer, tempBuffer - sendBuffer);
 }
