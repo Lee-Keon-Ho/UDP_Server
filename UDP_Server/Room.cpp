@@ -76,7 +76,7 @@ bool CRoom::OutPlayer(CPlayer* _player)
 		{
 			(*iter)->SetBoss(0);
 		}
-		for (int i = 1; iter != iterEnd; i++)
+		for (int i = 1; iter != iterEnd; iter++)
 		{
 			(*iter)->SetNumber(i);
 		}

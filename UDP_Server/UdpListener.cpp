@@ -27,7 +27,7 @@ bool CUdpListener::Init(PCSTR _ip, u_short _port)
 	m_addr.sin_family = AF_INET;
 	inet_pton(AF_INET, _ip, &m_addr.sin_addr);
 	m_addr.sin_port = htons(_port);
-
+	
 	if (bind(m_socket, (SOCKADDR*)&m_addr, sizeof(m_addr)) == SOCKET_ERROR)
 	{
 		int err = WSAGetLastError();
