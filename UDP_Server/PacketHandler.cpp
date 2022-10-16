@@ -412,8 +412,8 @@ void CPacketHandler::Handle_SockAddr(CPlayer* _player)
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = 14;
 	tempBuffer += sizeof(USHORT);
-	*(UINT*)tempBuffer = addr.sin_addr.S_un.S_addr;
-	tempBuffer += sizeof(UINT);
+	*(ULONG*)tempBuffer = addr.sin_addr.S_un.S_addr;
+	tempBuffer += sizeof(ULONG);
 	*(USHORT*)tempBuffer = ntohs(addr.sin_port);
 	tempBuffer += sizeof(USHORT);
 
@@ -433,7 +433,7 @@ void CPacketHandler::Test(CPlayer* _player)
 		std::vector<CPlayer*>::iterator iter = players.begin();
 		std::vector<CPlayer*>::iterator iterEnd = players.end();
 
-		*(USHORT*)tempBuffer = 8 + ((sizeof(UINT) + sizeof(UINT) + sizeof(USHORT)) * players.size());
+		*(USHORT*)tempBuffer = 8 + ((sizeof(UINT) + sizeof(IN_ADDR) + sizeof(USHORT)) * players.size());
 		tempBuffer += sizeof(USHORT);
 		*(USHORT*)tempBuffer = 15;
 		tempBuffer += sizeof(USHORT);
@@ -448,8 +448,8 @@ void CPacketHandler::Test(CPlayer* _player)
 
 			*(UINT*)tempBuffer = (*iter)->GetSocket();
 			tempBuffer += sizeof(UINT);
-			*(UINT*)tempBuffer = addr.sin_addr.S_un.S_addr;
-			tempBuffer += sizeof(UINT);
+			*(IN_ADDR*)tempBuffer = addr.sin_addr;
+			tempBuffer += sizeof(IN_ADDR);
 			*(USHORT*)tempBuffer = ntohs(addr.sin_port);
 			tempBuffer += sizeof(USHORT);
 		}

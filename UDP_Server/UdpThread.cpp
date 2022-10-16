@@ -69,56 +69,14 @@ void CUdpThread::RunLoop()
 		int type = *(USHORT*)tempBuffer;
 		tempBuffer += sizeof(USHORT);
 		int clientSocket = *(USHORT*)tempBuffer;
-		tempBuffer += sizeof(USHORT);
-		
-		////test
-		//if (type == 1)
-		//{
-		//	if (count < 2)
-		//	{
-		//		if (socket1[count] != clientSocket)
-		//		{
-		//			socket1[count] = clientSocket;
-		//			socketAddr[count] = clientAddr;
-		//			printf("socket : %d  port : %d\n", clientSocket, ntohs(clientAddr.sin_port));
-		//			count++;
-		//		}
-		//	}
-		//}
-
-		//if (count >= 2)
-		//{
-		//	int sendSize = 0;
-
-		//	tempBuffer = sendBuffer;
-
-		//	*(USHORT*)tempBuffer = 2 + ((2 + sizeof(SOCKADDR_IN)) * count);
-		//	tempBuffer += 2;
-		//	*(USHORT*)tempBuffer = 2;
-		//	tempBuffer += 2;
-		//	for (int i = 0; i < 2; i++)
-		//	{
-		//		*(USHORT*)tempBuffer = socket1[i];
-		//		tempBuffer += 2;
-		//		*(SOCKADDR_IN*)tempBuffer = socketAddr[i];
-		//		tempBuffer += sizeof(SOCKADDR_IN);
-		//	}
-
-		//	int addrSize = sizeof(clientAddrSize);
-
-		//	for (int i = 0; i < 2; i++)
-		//	{	
-		//		sendSize = sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&socketAddr[i], clientAddrSize);
-		//		count = 0;
-		//	}
-		//}
+		tempBuffer += sizeof(USHORT);	
 
 		CPlayer* pPlayer = pLobby->SearchSocket(clientSocket);
 
 		if (pPlayer == nullptr) continue;
 
 		pPlayer->SetAddr(clientAddr);
-		printf("%d\n", ntohs(clientAddr.sin_port));
+		printf("socket :  %d  port : %d\n", pPlayer->GetSocket(), ntohs(clientAddr.sin_port));
 		pPlayer->SetUdp(true);
 
 		tempBuffer = sendBuffer;
@@ -127,7 +85,10 @@ void CUdpThread::RunLoop()
 		*(USHORT*)tempBuffer = 1;
 		tempBuffer += sizeof(USHORT);
 
-		sendSize = sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&clientAddr, clientAddrSize);
+		for (int i = 0; i < 2; i++)
+		{
+			sendSize = sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&clientAddr, clientAddrSize);
+		}
 
 		packetHandler->Handle_SockAddr(pPlayer); // ¼öÁ¤
 
