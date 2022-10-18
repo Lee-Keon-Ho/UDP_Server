@@ -85,6 +85,7 @@ void CUdpThread::RunLoop()
 		*(USHORT*)tempBuffer = 1;
 		tempBuffer += sizeof(USHORT);
 
+
 		for (int i = 0; i < 2; i++)
 		{
 			sendSize = sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&clientAddr, clientAddrSize);
@@ -92,6 +93,6 @@ void CUdpThread::RunLoop()
 
 		packetHandler->Handle_SockAddr(pPlayer); // ¼öÁ¤
 
-		packetHandler->Test(pPlayer);
+		packetHandler->Handle_AddressAll(pPlayer);
 	}
 }

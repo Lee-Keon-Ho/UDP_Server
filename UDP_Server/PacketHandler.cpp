@@ -7,6 +7,8 @@ CPacketHandler* CPacketHandler::pInstance = nullptr;
 
 int CPacketHandler::Handle(CPlayer* _player)
 {
+	//-------------------------------------------------
+	// 함수나 class화 
 	CRingBuffer* ringBuffer = _player->GetRingBuffer();
 
 	char* readBuffer = ringBuffer->GetReadBuffer();
@@ -20,6 +22,8 @@ int CPacketHandler::Handle(CPlayer* _player)
 		memcpy(tempBuffer + read_EndBuf, ringBuffer->GetBuffer(), readSize - read_EndBuf);
 		readBuffer = tempBuffer;
 	}
+	//-------------------------------------------------
+	// GetPacket()
 
 	for (int i = 0; i < readSize; i++)
 	{
@@ -420,7 +424,7 @@ void CPacketHandler::Handle_SockAddr(CPlayer* _player)
 	_player->Send(sendBuffer, tempBuffer - sendBuffer);
 }
 
-void CPacketHandler::Test(CPlayer* _player)
+void CPacketHandler::Handle_AddressAll(CPlayer* _player)
 {
 	CRoom* room = _player->GetRoom();
 

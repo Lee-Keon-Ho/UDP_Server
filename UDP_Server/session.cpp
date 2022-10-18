@@ -20,7 +20,7 @@ CSession::~CSession()
 	if (m_ringBuffer) { delete m_ringBuffer; m_ringBuffer = nullptr; }
 }
 
-bool CSession::WsaRecv()
+bool CSession::WsaRecv() 
 {
 	DWORD recvBytes = 0;
 	DWORD flags = 0;
@@ -48,6 +48,33 @@ bool CSession::Send(char* _buffer, int _size)
 
 void CSession::RecvEvent(int _size)
 {
+
+}
+
+void CSession::RecvEvent1(int _size)
+{
+	int readSize;
+
+	m_ringBuffer->Write(_size);
+
+	while (true)
+	{
+		readSize = OnRecv();
+
+		m_ringBuffer->Read(readSize);
+
+		if (m_ringBuffer->GetReadSize() == 0) break;
+	}
+
+	m_dataBuf.len = m_ringBuffer->GetWriteBufferSize();
+	m_dataBuf.buf = m_ringBuffer->GetWriteBuffer();
+
+	WsaRecv();
+}
+
+int CSession::OnRecv()
+{
+
 }
 
 void CSession::SetAddr(SOCKADDR_IN _addr)

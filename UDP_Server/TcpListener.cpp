@@ -66,3 +66,24 @@ bool CTcpListener::onAccept()
 
 	return true;
 }
+
+SOCKET CTcpListener::OnAccept1()
+{
+	int size = sizeof(sockaddr_in);
+	DWORD recvBytes = 0;
+	DWORD flags = 0;
+
+	sockaddr_in clientAddr;
+	SOCKET clientSocket;
+
+	clientSocket = accept(m_listenSocket, (sockaddr*)&clientAddr, &size);
+	if (clientSocket == INVALID_SOCKET)
+	{
+		printf("accept Error() \n");
+		return false;
+	}
+
+	printf("client socket : %ld\n", m_clientSocket);
+
+	return clientSocket;
+}

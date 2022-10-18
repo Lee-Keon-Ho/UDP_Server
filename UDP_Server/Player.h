@@ -26,6 +26,7 @@ public:
 	~CPlayer();
 
 	void RecvEvent(int _size) override;
+	int OnRecv() override;
 
 	void SetPlayerInfo(char* _name);
 	void SetPlayerInfo(int _number, int _state, int _team);

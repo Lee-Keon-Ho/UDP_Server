@@ -56,13 +56,24 @@ void CLobbyServerApp::RunLoop()
 {
 	while (true)
 	{
-		m_pListener->onAccept();
-		m_pListener->OnAssociate();
+		/*m_pListener->onAccept();
+		m_pListener->OnAssociate();*/
 
 		/*CPlayer* pPlayer = new CPlayer(m_clientSocket);
 		CIocp::GetInstance()->Associate(m_clientSocket, (CSession*)pPlayer);
 		if (!pPlayer->WsaRecv())*/
 
+		SOCKET socket = m_pListener->OnAccept1();
+
+		CPlayer* pPlayer = new CPlayer(socket);
+		CIocp::GetInstance()->Associate(socket, (CSession*)pPlayer); 
+		if (!pPlayer->WsaRecv()) // OnConnect()
+		{
+			if (WSAGetLastError() != WSA_IO_PENDING)
+			{
+				printf("wsarecv error %d\n", WSAGetLastError());
+			}
+		}
 	}
 }
 
