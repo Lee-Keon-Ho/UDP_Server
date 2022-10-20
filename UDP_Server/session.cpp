@@ -48,11 +48,6 @@ bool CSession::Send(char* _buffer, int _size)
 
 void CSession::RecvEvent(int _size)
 {
-
-}
-
-void CSession::RecvEvent1(int _size)
-{
 	int readSize;
 
 	m_ringBuffer->Write(_size);
@@ -74,7 +69,7 @@ void CSession::RecvEvent1(int _size)
 
 int CSession::OnRecv()
 {
-
+	return 0;
 }
 
 void CSession::SetAddr(SOCKADDR_IN _addr)

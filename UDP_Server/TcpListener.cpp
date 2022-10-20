@@ -49,25 +49,7 @@ bool CTcpListener::Init(PCSTR _ip, u_short _port)
 	return true;
 }
 
-bool CTcpListener::onAccept()
-{
-	int size = sizeof(m_addrClient);
-	DWORD recvBytes = 0;
-	DWORD flags = 0;
-
-	m_clientSocket = accept(m_listenSocket, (sockaddr*)&m_addrClient, &size);
-	if (m_clientSocket == INVALID_SOCKET)
-	{
-		printf("accept Error() \n");
-		return false;
-	}
-
-	printf("client socket : %ld\n", m_clientSocket);
-
-	return true;
-}
-
-SOCKET CTcpListener::OnAccept1()
+SOCKET CTcpListener::OnAccept()
 {
 	int size = sizeof(sockaddr_in);
 	DWORD recvBytes = 0;
@@ -83,7 +65,7 @@ SOCKET CTcpListener::OnAccept1()
 		return false;
 	}
 
-	printf("client socket : %ld\n", m_clientSocket);
+	printf("client socket : %ld\n", clientSocket);
 
 	return clientSocket;
 }

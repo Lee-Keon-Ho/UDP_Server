@@ -25,7 +25,6 @@ public:
 	CPlayer(SOCKET _socket, char* _name);
 	~CPlayer();
 
-	void RecvEvent(int _size) override;
 	int OnRecv() override;
 
 	void SetPlayerInfo(char* _name);

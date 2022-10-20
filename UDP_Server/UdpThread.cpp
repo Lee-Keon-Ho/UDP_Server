@@ -16,6 +16,7 @@ bool CUdpThread::Start(SOCKET _socket)
 	m_socket = _socket;
 
 	HANDLE handle = (HANDLE)_beginthreadex(NULL, 0, &CUdpThread::UdpFunc, this, 0, NULL);
+	Sleep(100);
 	return true;
 }
 
@@ -36,20 +37,10 @@ void CUdpThread::RunLoop()
 	char sendBuffer[255];
 	memset(sendBuffer, 0, 255);
 	sockaddr_in clientAddr;
-	CPacketHandler* packetHandler = CPacketHandler::GetIstance();
+	CPacketHandler* packetHandler = CPacketHandler::GetInstance();
 	int clientAddrSize = sizeof(clientAddr);
 
-
-	int inCount = 0;
-	//int playerCount = room->GetPlayerList().size();
-	bool bUdp = false;
-
 	SOCKET socket = m_socket;
-
-	//test
-	/*int count = 0;
-	SOCKET socket1[2];
-	SOCKADDR_IN socketAddr[2];*/
 
 	while (true)
 	{
@@ -85,11 +76,7 @@ void CUdpThread::RunLoop()
 		*(USHORT*)tempBuffer = 1;
 		tempBuffer += sizeof(USHORT);
 
-
-		for (int i = 0; i < 2; i++)
-		{
-			sendSize = sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&clientAddr, clientAddrSize);
-		}
+		sendSize = sendto(socket, sendBuffer, tempBuffer - sendBuffer, 0, (sockaddr*)&clientAddr, clientAddrSize);
 
 		packetHandler->Handle_SockAddr(pPlayer); // ¼öÁ¤
 

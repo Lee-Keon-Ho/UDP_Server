@@ -12,9 +12,7 @@ class CTcpListener
 {
 protected:
 	SOCKET m_listenSocket;
-	SOCKET m_clientSocket;
 	sockaddr_in m_addr;
-	sockaddr_in m_addrClient;
 
 public:
 	CTcpListener();
@@ -22,8 +20,6 @@ public:
 
 	bool Init(PCSTR _ip, u_short _port);
 
-	bool onAccept();
-
 	//2022-10-18 ¼ö¾÷
-	SOCKET OnAccept1();
+	SOCKET OnAccept();
 };

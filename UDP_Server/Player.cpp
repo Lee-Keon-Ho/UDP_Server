@@ -24,28 +24,9 @@ CPlayer::~CPlayer()
 
 }
 
-void CPlayer::RecvEvent(int _size) // 이걸 왜 player에서 하고 있을까? 2022-10-18
-{
-	int readSize;
-
-	m_ringBuffer->Write(_size); // session에서 가지고 있는걸 왜 player에서 처리하고 있는가 2022-10-18
-
-	while (true)
-	{
-		readSize = CPacketHandler::GetIstance()->Handle(this); // GetInstance
-
-		m_ringBuffer->Read(readSize);
-
-		if (m_ringBuffer->GetReadSize() == 0) break;
-	}
-
-	m_dataBuf.len = m_ringBuffer->GetWriteBufferSize();
-	m_dataBuf.buf = m_ringBuffer->GetWriteBuffer();
-}
-
 int CPlayer::OnRecv()
 {
-	return CPacketHandler::GetIstance()->Handle(this);
+	return CPacketHandler::GetInstance()->Handle(this);
 }
 
 void CPlayer::SetPlayerInfo(char* _name)

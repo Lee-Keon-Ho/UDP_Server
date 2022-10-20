@@ -31,9 +31,9 @@ bool CLobbyServerApp::Initialize()
 bool CLobbyServerApp::CreateInstance()
 {
 	CIocp::GetInstance();
-	CPacketHandler::GetIstance();
+	CPacketHandler::GetInstance();
 
-	m_pListener = new CUserTcpListener();
+	m_pListener = new CTcpListener();
 	if (!m_pListener) return false;
 	m_pUdp = new CUdpListener();
 	if (!m_pUdp) return false;
@@ -45,7 +45,7 @@ bool CLobbyServerApp::CreateInstance()
 
 bool CLobbyServerApp::StartInstance()
 {
-	CPacketHandler::GetIstance()->SetLobby(m_pLobby);
+	CPacketHandler::GetInstance()->SetLobby(m_pLobby);
 	if (!m_pListener->Init("112.184.241.149", 30002)) return false;
 	if (!m_pUdp->Init("112.184.241.149", 30001)) return false;
 
@@ -56,24 +56,12 @@ void CLobbyServerApp::RunLoop()
 {
 	while (true)
 	{
-		/*m_pListener->onAccept();
-		m_pListener->OnAssociate();*/
-
-		/*CPlayer* pPlayer = new CPlayer(m_clientSocket);
-		CIocp::GetInstance()->Associate(m_clientSocket, (CSession*)pPlayer);
-		if (!pPlayer->WsaRecv())*/
-
-		SOCKET socket = m_pListener->OnAccept1();
+		SOCKET socket = m_pListener->OnAccept();
 
 		CPlayer* pPlayer = new CPlayer(socket);
 		CIocp::GetInstance()->Associate(socket, (CSession*)pPlayer); 
-		if (!pPlayer->WsaRecv()) // OnConnect()
-		{
-			if (WSAGetLastError() != WSA_IO_PENDING)
-			{
-				printf("wsarecv error %d\n", WSAGetLastError());
-			}
-		}
+
+		pPlayer->WsaRecv(); // OnConnect() 뭔가 설정할게 있다면
 	}
 }
 

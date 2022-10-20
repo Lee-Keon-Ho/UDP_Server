@@ -50,13 +50,6 @@ void CWorkerThread::RunLoop()
 			continue;
 		}
 
-		// 2022-10-18
-		// RecvEvent일반 함수로 사용하고 
-		// OnRecv를 만들어서 virtual로 사용한다.
-		/*pSession->RecvEvent(bytesTrans); 
-
-		pSession->WsaRecv();*/
-
-		pSession->RecvEvent1(bytesTrans);
+		pSession->RecvEvent(bytesTrans);
 	}
 }

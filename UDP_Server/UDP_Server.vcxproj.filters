@@ -45,9 +45,6 @@
     <ClCompile Include="TcpListener.cpp">
       <Filter>소스 파일\NetCore</Filter>
     </ClCompile>
-    <ClCompile Include="UserTcpListener.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="IOCP.cpp">
       <Filter>소스 파일\NetCore</Filter>
     </ClCompile>
@@ -85,9 +82,6 @@
     </ClInclude>
     <ClInclude Include="TcpListener.h">
       <Filter>소스 파일\NetCore</Filter>
-    </ClInclude>
-    <ClInclude Include="UserTcpListener.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="PacketHandler.h">
       <Filter>헤더 파일</Filter>

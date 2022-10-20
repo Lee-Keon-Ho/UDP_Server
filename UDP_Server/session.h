@@ -19,10 +19,8 @@ public:
 
 	bool WsaRecv();
 	bool Send(char* _buffer, int _size);
-	virtual void RecvEvent(int _size);
 
-	// 2022-10-18
-	void RecvEvent1(int _size);
+	void RecvEvent(int _size);
 	virtual int OnRecv();
 
 	void SetAddr(SOCKADDR_IN _addr);

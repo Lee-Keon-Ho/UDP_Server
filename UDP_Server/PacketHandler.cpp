@@ -7,42 +7,19 @@ CPacketHandler* CPacketHandler::pInstance = nullptr;
 
 int CPacketHandler::Handle(CPlayer* _player)
 {
-	//-------------------------------------------------
-	// 함수나 class화 
-	CRingBuffer* ringBuffer = _player->GetRingBuffer();
+	char* readBuffer = GetPacket(_player);
 
-	char* readBuffer = ringBuffer->GetReadBuffer();
-	int read_EndBuf = ringBuffer->GetRemainSize_EndBuffer(readBuffer);
-	int readSize = ringBuffer->GetReadSize();
+	if (readBuffer == nullptr) return 0;
 
-	if (readSize > read_EndBuf)
-	{
-		char tempBuffer[1000];
-		memcpy(tempBuffer, ringBuffer->GetReadBuffer(), read_EndBuf);
-		memcpy(tempBuffer + read_EndBuf, ringBuffer->GetBuffer(), readSize - read_EndBuf);
-		readBuffer = tempBuffer;
-	}
-	//-------------------------------------------------
-	// GetPacket()
-
-	for (int i = 0; i < readSize; i++)
-	{
-		printf("%d ", readBuffer[i]);
-	}
-	printf("\n");
-
-	if (readSize == 0) return readSize;
-
-	char* tempBuf = readBuffer;
-	USHORT size = *(USHORT*)tempBuf;
-	tempBuf += sizeof(USHORT);
-	USHORT type = *(USHORT*)tempBuf;
-	tempBuf += sizeof(USHORT);
+	USHORT size = *(USHORT*)readBuffer;
+	readBuffer += sizeof(USHORT);
+	USHORT type = *(USHORT*)readBuffer;
+	readBuffer += sizeof(USHORT);
 
 	switch (type)
 	{
 	case CS_PT_LOGIN:
-		Handle_Login(_player, tempBuf, size);
+		Handle_Login(_player, readBuffer, size);
 		break;
 	case CS_PT_LOGOUT:
 		Handle_Logout(_player);
@@ -54,13 +31,13 @@ int CPacketHandler::Handle(CPlayer* _player)
 		Handle_RoomList();
 		break;
 	case CS_PT_CHAT:
-		Handle_Chatting(_player, tempBuf, size);
+		Handle_Chatting(_player, readBuffer, size);
 		break;
 	case CS_PT_CREATEROOM:
-		Handle_CreateRoom(_player, tempBuf, size);
+		Handle_CreateRoom(_player, readBuffer, size);
 		break;
 	case CS_PT_ROOMIN:
-		Handle_RoomIn(_player, tempBuf);
+		Handle_RoomIn(_player, readBuffer);
 		break;
 	case CS_PT_ROOMOUT:
 		Handle_RoomOut(_player);
@@ -69,7 +46,7 @@ int CPacketHandler::Handle(CPlayer* _player)
 		Handle_RoomState(_player);
 		break;
 	case CS_PT_TEAMCHANGE:
-		Handle_TeamChange(_player, tempBuf);
+		Handle_TeamChange(_player, readBuffer);
 		break;
 	case CS_PT_READY:
 		Handle_Ready(_player);
@@ -84,7 +61,7 @@ int CPacketHandler::Handle(CPlayer* _player)
 		break;
 	}
 
-	return readSize;
+	return size;
 }
 
 void CPacketHandler::Handle_Login(CPlayer* _player, char* _buffer, USHORT _size)
@@ -462,7 +439,34 @@ void CPacketHandler::Handle_AddressAll(CPlayer* _player)
 	}
 }
 
-CPacketHandler* CPacketHandler::GetIstance()
+char* CPacketHandler::GetPacket(CPlayer* _player)
+{
+	CRingBuffer* ringBuffer = _player->GetRingBuffer();
+
+	char* readBuffer = ringBuffer->GetReadBuffer();
+	int read_EndBuf = ringBuffer->GetRemainSize_EndBuffer(readBuffer);
+	int readSize = ringBuffer->GetReadSize();
+
+	if (readSize > read_EndBuf)
+	{
+		char tempBuffer[1000];
+		memcpy(tempBuffer, readBuffer, read_EndBuf);
+		memcpy(tempBuffer + read_EndBuf, ringBuffer->GetBuffer(), readSize - read_EndBuf);
+		readBuffer = tempBuffer;
+	}
+
+	if (readSize == 0) return nullptr;
+
+	for (int i = 0; i < readSize; i++)
+	{
+		printf("%d ", readBuffer[i]);
+	}
+	printf("\n");
+
+	return readBuffer;
+}
+
+CPacketHandler* CPacketHandler::GetInstance()
 {
 	if (pInstance == nullptr) { pInstance = new CPacketHandler(); }
 	return pInstance;
