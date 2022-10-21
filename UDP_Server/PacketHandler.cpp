@@ -353,7 +353,7 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 
 	int size = playerList.size() * sizeof(SOCKADDR_IN);
 
-	*(USHORT*)tempBuffer = 4;
+	*(USHORT*)tempBuffer = 6;
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = CS_PT_START;
 	tempBuffer += sizeof(USHORT);
