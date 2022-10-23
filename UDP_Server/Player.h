@@ -29,7 +29,7 @@ public:
 
 	void SetPlayerInfo(char* _name);
 	void SetPlayerInfo(int _number, int _state, int _team);
-	void SetRoom(CRoom* _room, int _boss);
+	void SetRoom(CRoom* _room, int _boss, int _team);
 	void SetBoss(int _boss);
 	void SetNumber(int _number);
 	void SetState(int _state);

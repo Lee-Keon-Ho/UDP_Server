@@ -202,7 +202,7 @@ void CPacketHandler::Handle_CreateRoom(CPlayer* _player, char* _buffer, int _siz
 	CRoom* room = new CRoom(number, tempBuffer, _size - sizeof(int), 0, state);
 	if (room != nullptr)
 	{
-		_player->SetRoom(room, 0);
+		_player->SetRoom(room, 0, 0);
 
 		m_pLobby->AddRoom(room);
 
@@ -233,13 +233,16 @@ void CPacketHandler::Handle_RoomIn(CPlayer* _player, char* _buffer)
 	char* tempBuffer = _buffer;
 
 	USHORT ok;
+	int team = 0;
 	int roomNum = *(USHORT*)tempBuffer;
 	CRoom* room = m_pLobby->RoomIn(_player, roomNum);
 
 	if (room != nullptr) ok = 1;
 	else ok = 0;
 
-	_player->SetRoom(room, 1);
+	if ((room->GetPlayerSize() / 2) != 0) team = 1;
+
+	_player->SetRoom(room, 1, team);
 
 	char sendBuffer[10];
 	tempBuffer = sendBuffer;
@@ -269,7 +272,7 @@ void CPacketHandler::Handle_RoomOut(CPlayer* _player)
 
 	Handle_RoomState(_player);
 
-	_player->SetRoom(nullptr, 0);
+	_player->SetRoom(nullptr, 0, 0);
 	_player->SetState(0);
 
 	char sendBuffer[10];
@@ -293,7 +296,7 @@ void CPacketHandler::Handle_RoomState(CPlayer* _player)
 
 	int size = players.size();
 	int nameLen = PLAYER_NAME_MAX;
-	int totalLen = 6 + nameLen; // team, ready, boss, name
+	int totalLen = 6 + nameLen; // team, ready, boss, nameLen
 
 	*(USHORT*)tempBuffer = 6 + (totalLen * size); // size + type + playerCount
 	tempBuffer += sizeof(USHORT);
@@ -368,7 +371,7 @@ void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)
 	char sendBuffer[20];
 	char* tempBuffer = sendBuffer;
 
-	*(USHORT*)tempBuffer = 10;
+	*(USHORT*)tempBuffer = 12;
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = CS_PT_PLAYERINFO;
 	tempBuffer += sizeof(USHORT);
@@ -377,6 +380,8 @@ void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)
 	*(USHORT*)tempBuffer = _player->GetReady();
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = _player->GetNumber();
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = _player->GetTeam();
 	tempBuffer += sizeof(USHORT);
 
 	_player->Send(sendBuffer, tempBuffer - sendBuffer);
@@ -414,14 +419,17 @@ void CPacketHandler::Handle_AddressAll(CPlayer* _player)
 		std::vector<CPlayer*>::iterator iter = players.begin();
 		std::vector<CPlayer*>::iterator iterEnd = players.end();
 
-		*(USHORT*)tempBuffer = 8 + ((sizeof(UINT) + sizeof(IN_ADDR) + sizeof(USHORT)) * players.size());
+		*(USHORT*)tempBuffer = 10 + ((sizeof(UINT) + sizeof(IN_ADDR) + sizeof(USHORT)) * players.size());
 		tempBuffer += sizeof(USHORT);
 		*(USHORT*)tempBuffer = 15;
 		tempBuffer += sizeof(USHORT);
-		*(USHORT*)tempBuffer = _player->GetBoss();
-		tempBuffer += sizeof(USHORT);
 		*(USHORT*)tempBuffer = players.size();
 		tempBuffer += sizeof(USHORT);
+		*(USHORT*)tempBuffer = room->GetTeamACount();
+		tempBuffer += sizeof(USHORT);
+		*(USHORT*)tempBuffer = room->GetTeamBCount();
+		tempBuffer += sizeof(USHORT);
+
 
 		for (; iter != iterEnd; iter++)
 		{

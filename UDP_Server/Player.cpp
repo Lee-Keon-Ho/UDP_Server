@@ -41,10 +41,11 @@ void CPlayer::SetPlayerInfo(int _number, int _state, int _team)
 	m_team = _team;
 }
 
-void CPlayer::SetRoom(CRoom* _room, int _boss)
+void CPlayer::SetRoom(CRoom* _room, int _boss, int _team)
 {
 	m_pRoom = _room;
 	m_boss = _boss;
+	m_team = _team;
 }
 
 void CPlayer::SetBoss(int _boss)
