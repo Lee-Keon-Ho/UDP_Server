@@ -16,7 +16,7 @@ bool CUdpThread::Start(SOCKET _socket)
 	m_socket = _socket;
 
 	HANDLE handle = (HANDLE)_beginthreadex(NULL, 0, &CUdpThread::UdpFunc, this, 0, NULL);
-	Sleep(100);
+	
 	return true;
 }
 
@@ -25,7 +25,6 @@ unsigned int _stdcall CUdpThread::UdpFunc(void* _pArgs)
 	CUdpThread* tread = (CUdpThread*)_pArgs;
 
 	tread->RunLoop();
-
 	return 0;
 }
 

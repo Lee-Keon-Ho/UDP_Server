@@ -150,7 +150,7 @@
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="session.cpp" />
     <ClCompile Include="TcpListener.cpp" />
-    <ClCompile Include="UdpListener.cpp" />
+    <ClCompile Include="UdpClient.cpp" />
     <ClCompile Include="UdpThread.cpp" />
     <ClCompile Include="workerThread.cpp" />
   </ItemGroup>
@@ -166,7 +166,7 @@
     <ClInclude Include="Room.h" />
     <ClInclude Include="session.h" />
     <ClInclude Include="TcpListener.h" />
-    <ClInclude Include="UdpListener.h" />
+    <ClInclude Include="UdpClient.h" />
     <ClInclude Include="UdpThread.h" />
     <ClInclude Include="workerThread.h" />
   </ItemGroup>

@@ -1,20 +1,20 @@
-#include "UdpListener.h"
-#include "UdpThread.h"
+#include "UdpClient.h"
 #include <stdio.h>
 
 #pragma comment(lib, "ws2_32.lib")
 
-CUdpListener::CUdpListener()
+CUdpClient::CUdpClient()
 {
 
 }
 
-CUdpListener::~CUdpListener()
+CUdpClient::~CUdpClient()
 {
 	closesocket(m_socket);
+	if (m_pUdpThread) { delete m_pUdpThread; m_pUdpThread = nullptr; }
 }
 
-bool CUdpListener::Init(PCSTR _ip, u_short _port)
+bool CUdpClient::Init(PCSTR _ip, u_short _port) // 
 {
 	m_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (m_socket == INVALID_SOCKET)
@@ -36,9 +36,9 @@ bool CUdpListener::Init(PCSTR _ip, u_short _port)
 		return false;
 	}
 
-	CUdpThread udp;
+	m_pUdpThread = new CUdpThread() ;
 
-	udp.Start(m_socket);
+	m_pUdpThread->Start(m_socket); 
 
 	printf("udp server start...\n");
 

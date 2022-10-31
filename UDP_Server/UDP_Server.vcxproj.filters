@@ -27,7 +27,7 @@
     <ClCompile Include="App.cpp">
       <Filter>소스 파일\AppSub</Filter>
     </ClCompile>
-    <ClCompile Include="UdpListener.cpp">
+    <ClCompile Include="UdpClient.cpp">
       <Filter>소스 파일\NetCore</Filter>
     </ClCompile>
     <ClCompile Include="LobbyServerApp.cpp">
@@ -68,7 +68,7 @@
     <ClInclude Include="App.h">
       <Filter>소스 파일\AppSub</Filter>
     </ClInclude>
-    <ClInclude Include="UdpListener.h">
+    <ClInclude Include="UdpClient.h">
       <Filter>소스 파일\NetCore</Filter>
     </ClInclude>
     <ClInclude Include="LobbyServerApp.h">

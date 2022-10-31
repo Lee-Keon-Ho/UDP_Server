@@ -35,7 +35,7 @@ bool CLobbyServerApp::CreateInstance()
 
 	m_pListener = new CTcpListener();
 	if (!m_pListener) return false;
-	m_pUdp = new CUdpListener();
+	m_pUdp = new CUdpClient();
 	if (!m_pUdp) return false;
 	m_pLobby = new CLobby();
 	if (!m_pLobby) return false;
