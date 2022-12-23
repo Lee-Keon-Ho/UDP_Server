@@ -20,7 +20,7 @@ public:
 	bool WsaRecv();
 	bool Send(char* _buffer, int _size);
 
-	void RecvEvent(int _size);
+	int RecvEvent(int _size);
 	virtual int OnRecv();
 
 	void SetAddr(SOCKADDR_IN _addr);

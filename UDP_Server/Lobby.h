@@ -8,6 +8,7 @@ class CLobby
 public:
 	typedef std::list<CPlayer*> playerList_t;
 	typedef std::list<CRoom*> roomList_t;
+
 private:
 	playerList_t m_playerList;
 	roomList_t m_roomList;

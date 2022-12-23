@@ -11,7 +11,7 @@ public:
 	void Destroy();
 
 protected:
-	virtual bool Initialize() { return true; }
+	virtual bool Initialize() = 0; // { return true; }
 	virtual bool CreateInstance() { return true; }
 	virtual bool StartInstance() { return true; }
 	virtual void RunLoop() {}

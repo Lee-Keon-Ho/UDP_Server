@@ -7,7 +7,6 @@ CRoom::CRoom()
 }
 
 CRoom::CRoom(int _num, char* _name, int _nameSize, int _playerCount, int _state)
-	: m_teamA_Count(0), m_teamB_Count(0)
 {
 	InitializeCriticalSection(&m_cs_player);
 	memset(m_room.name, 0, ROOM_NAME_MAX);
@@ -30,23 +29,14 @@ bool CRoom::InPlayer(CPlayer* _player)
 	if (size < PLAYER_MAX)
 	{
 		EnterCriticalSection(&m_cs_player);
-		if (m_teamA_Count <= m_teamB_Count)
-		{
-			_player->SetPlayerInfo(size + 1, 1, 0);
-			m_teamA_Count++;
-		}
-		else
-		{
-			_player->SetPlayerInfo(size + 1, 1, 1);
-			m_teamB_Count++;
-		}
+
+		_player->SetPlayerInfo(size + 1, 1);
 
 		m_room.playerCount++;
 		m_player.push_back(_player);
 		LeaveCriticalSection(&m_cs_player);
 		return true;
 	}
-	LeaveCriticalSection(&m_cs_player);
 	return false;
 }
 
@@ -67,7 +57,7 @@ bool CRoom::OutPlayer(CPlayer* _player)
 
 	int size = m_player.size();
 
-	if (m_player.size() != 0)
+	if (size != 0)
 	{
 		std::vector<CPlayer*>::iterator iter = m_player.begin();
 		std::vector<CPlayer*>::iterator iterEnd = m_player.end();
@@ -75,20 +65,13 @@ bool CRoom::OutPlayer(CPlayer* _player)
 		if (_player->GetBoss() == 0)
 		{
 			(*iter)->SetBoss(0);
+			(*iter)->SetReady(0);
 		}
 		for (int i = 1; iter != iterEnd; iter++)
 		{
 			(*iter)->SetNumber(i);
+			(*iter)->SetReady(0);
 		}
-	}
-
-	if (_player->GetTeam() == 0)
-	{
-		m_teamA_Count--;
-	}
-	else
-	{
-		m_teamB_Count--;
 	}
 
 	m_room.playerCount--;
@@ -101,12 +84,12 @@ bool CRoom::OutPlayer(CPlayer* _player)
 
 void CRoom::OnStart()
 {
+	CPlayer* boss = nullptr;
+	bool start = true;
+
 	EnterCriticalSection(&m_cs_player);
 	std::vector<CPlayer*>::iterator iter = m_player.begin();
 	std::vector<CPlayer*>::iterator iterEnd = m_player.end();
-
-	CPlayer* boss = nullptr;
-	bool start = true;
 
 	for (; iter != iterEnd; iter++)
 	{

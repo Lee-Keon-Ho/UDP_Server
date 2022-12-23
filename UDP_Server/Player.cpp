@@ -8,13 +8,13 @@ CPlayer::CPlayer()
 }
 
 CPlayer::CPlayer(SOCKET _socket) : CSession(_socket),
-	m_state(0), m_number(0), m_team(0), m_ready(0), m_boss(0), m_bUdp(false)
+	m_state(0), m_number(0), m_ready(0), m_boss(0), m_bUdp(false)
 {
 	memset(m_name, 0, PLAYER_NAME_MAX);
 }
 
 CPlayer::CPlayer(SOCKET _socket, char* _name) : CSession(_socket),
-	m_state(0), m_number(0), m_team(0), m_ready(0), m_boss(0), m_bUdp(false)
+	m_state(0), m_number(0), m_ready(0), m_boss(0), m_bUdp(false)
 {
 	memcpy(m_name, _name, PLAYER_NAME_MAX);
 }
@@ -29,23 +29,22 @@ int CPlayer::OnRecv()
 	return CPacketHandler::GetInstance()->Handle(this);
 }
 
-void CPlayer::SetPlayerInfo(char* _name)
+void CPlayer::SetPlayerInfo(char* _name, int _nameLen)
 {
 	memcpy(m_name, _name, PLAYER_NAME_MAX);
+	m_nameLen = _nameLen;
 }
 
-void CPlayer::SetPlayerInfo(int _number, int _state, int _team)
+void CPlayer::SetPlayerInfo(int _number, int _state)
 {
 	m_number = _number;
 	m_state = _state;
-	m_team = _team;
 }
 
-void CPlayer::SetRoom(CRoom* _room, int _boss, int _team)
+void CPlayer::SetRoom(CRoom* _room, int _boss)
 {
 	m_pRoom = _room;
 	m_boss = _boss;
-	m_team = _team;
 }
 
 void CPlayer::SetBoss(int _boss)
@@ -63,11 +62,6 @@ void CPlayer::SetState(int _state)
 	m_state = _state;
 }
 
-void CPlayer::SetTeam(int _team)
-{
-	m_team = _team;
-}
-
 void CPlayer::SetReady()
 {
 	if (m_ready == 0) m_ready = 1;
@@ -76,8 +70,7 @@ void CPlayer::SetReady()
 
 void CPlayer::SetReady(int _ready)
 {
-	if (m_ready == 0) m_ready = 1;
-	else m_ready = 0;
+	m_ready = _ready;
 }
 
 void CPlayer::SetPosition(float* _position)
@@ -89,7 +82,12 @@ void CPlayer::SetPosition(float* _position)
 
 void CPlayer::SetUdp(bool _bUdp)
 {
-	m_bUdp = true;
+	m_bUdp = _bUdp;
+}
+
+void CPlayer::SetSourceAddr(UINT _sourceAddr)
+{
+	m_sourceAddr = _sourceAddr;
 }
 
 CRoom* CPlayer::GetRoom()

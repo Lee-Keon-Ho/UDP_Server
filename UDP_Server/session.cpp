@@ -46,7 +46,7 @@ bool CSession::Send(char* _buffer, int _size)
 	return true;
 }
 
-void CSession::RecvEvent(int _size)
+int CSession::RecvEvent(int _size)
 {
 	int readSize;
 
@@ -55,6 +55,8 @@ void CSession::RecvEvent(int _size)
 	while (true)
 	{
 		readSize = OnRecv();
+
+		if (readSize < 0) return readSize;
 
 		m_ringBuffer->Read(readSize);
 

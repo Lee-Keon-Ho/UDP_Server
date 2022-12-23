@@ -21,9 +21,6 @@ private:
 
 	player_t m_player;
 
-	int m_teamA_Count;
-	int m_teamB_Count;
-
 	CRITICAL_SECTION m_cs_player;
 public:
 	CRoom();
@@ -42,6 +39,4 @@ public:
 	player_t GetPlayerList() { return m_player; }
 	int GetPlayerSize() { return m_player.size(); }
 	int GetNumber() { return m_room.number; }
-	int GetTeamACount() { return m_teamA_Count; }
-	int GetTeamBCount() { return m_teamB_Count; }
 };

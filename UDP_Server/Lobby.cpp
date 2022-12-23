@@ -46,7 +46,7 @@ CRoom* CLobby::RoomIn(CPlayer* _player, int _num)
 			if ((*iter)->InPlayer(_player))
 			{
 				LeaveCriticalSection(&m_cs_room);
-				return *iter;
+				return *iter; // return 보다는 break좋다 실수를 방지할 수 있다.
 			}
 			else
 			{

@@ -9,7 +9,15 @@ int CPacketHandler::Handle(CPlayer* _player)
 {
 	char* readBuffer = GetPacket(_player);
 
-	if (readBuffer == nullptr) return 0;
+	if (readBuffer == nullptr)
+	{
+		if (_player->GetUdp())
+		{
+			GameQuit(_player);
+		}
+		PlayerQuit(_player);
+		return -1;
+	}
 
 	USHORT size = *(USHORT*)readBuffer;
 	readBuffer += sizeof(USHORT);
@@ -57,6 +65,9 @@ int CPacketHandler::Handle(CPlayer* _player)
 	case CS_PT_PLAYERINFO:
 		Handle_PlayerInfo(_player);
 		break;
+	case CS_PT_GAMEOVER:
+		Handle_GameOver(_player);
+		break;
 	default:
 		break;
 	}
@@ -68,7 +79,7 @@ void CPacketHandler::Handle_Login(CPlayer* _player, char* _buffer, USHORT _size)
 {
 	char* tempBuffer = _buffer;
 
-	_player->SetPlayerInfo(tempBuffer);
+	_player->SetPlayerInfo(tempBuffer, _size - 4);
 
 	m_pLobby->AddPlayer(_player);
 
@@ -171,7 +182,7 @@ void CPacketHandler::Handle_Chatting(CPlayer* _player, char* _buffer, int _chatS
 	memset(chatStr, 0, 100);
 	char* tempBuffer = chatStr;
 
-	int nameSize = strlen(_player->GetName()) * sizeof(USHORT);
+	int nameSize = _player->GetNameLen();
 
 	memcpy(tempBuffer, _player->GetName(), nameSize);
 	tempBuffer += nameSize;
@@ -199,10 +210,11 @@ void CPacketHandler::Handle_CreateRoom(CPlayer* _player, char* _buffer, int _siz
 	int state = 1;
 	int ok = 0;
 
+	// 방은 원래 존재해서 방을 만들어 놓고 RoomIn이 맞다
 	CRoom* room = new CRoom(number, tempBuffer, _size - sizeof(int), 0, state);
 	if (room != nullptr)
 	{
-		_player->SetRoom(room, 0, 0);
+		_player->SetRoom(room, 0);
 
 		m_pLobby->AddRoom(room);
 
@@ -233,16 +245,13 @@ void CPacketHandler::Handle_RoomIn(CPlayer* _player, char* _buffer)
 	char* tempBuffer = _buffer;
 
 	USHORT ok;
-	int team = 0;
 	int roomNum = *(USHORT*)tempBuffer;
 	CRoom* room = m_pLobby->RoomIn(_player, roomNum);
 
 	if (room != nullptr) ok = 1;
 	else ok = 0;
 
-	if ((room->GetPlayerSize() / 2) != 0) team = 1;
-
-	_player->SetRoom(room, 1, team);
+	_player->SetRoom(room, 1);
 
 	char sendBuffer[10];
 	tempBuffer = sendBuffer;
@@ -272,8 +281,9 @@ void CPacketHandler::Handle_RoomOut(CPlayer* _player)
 
 	Handle_RoomState(_player);
 
-	_player->SetRoom(nullptr, 0, 0);
+	_player->SetRoom(nullptr, 0);
 	_player->SetState(0);
+	_player->SetReady(0);
 
 	char sendBuffer[10];
 	char* tempBuffer = sendBuffer;
@@ -296,7 +306,7 @@ void CPacketHandler::Handle_RoomState(CPlayer* _player)
 
 	int size = players.size();
 	int nameLen = PLAYER_NAME_MAX;
-	int totalLen = 6 + nameLen; // team, ready, boss, nameLen
+	int totalLen = 4 + nameLen; // ready, boss, nameLen
 
 	*(USHORT*)tempBuffer = 6 + (totalLen * size); // size + type + playerCount
 	tempBuffer += sizeof(USHORT);
@@ -312,8 +322,6 @@ void CPacketHandler::Handle_RoomState(CPlayer* _player)
 	{
 		memcpy(tempBuffer, (*iter)->GetName(), nameLen);
 		tempBuffer += nameLen;
-		*(USHORT*)tempBuffer = (*iter)->GetTeam();
-		tempBuffer += sizeof(USHORT);
 		*(USHORT*)tempBuffer = (*iter)->GetReady();
 		tempBuffer += sizeof(USHORT);
 		*(USHORT*)tempBuffer = (*iter)->GetBoss();
@@ -326,12 +334,11 @@ void CPacketHandler::Handle_RoomState(CPlayer* _player)
 
 void CPacketHandler::Handle_TeamChange(CPlayer* _player,char* _buffer)
 {
-	int team = *(USHORT*)_buffer;
-
-	_player->SetTeam(team);
+	// 사용 안함
+	/*int team = *(USHORT*)_buffer;
 
 	Handle_PlayerInfo(_player);
-	Handle_RoomState(_player);
+	Handle_RoomState(_player);*/
 }
 
 void CPacketHandler::Handle_Ready(CPlayer* _player)
@@ -350,11 +357,20 @@ void CPacketHandler::Handle_Start(CPlayer* _player)
 {
 	CRoom* room = _player->GetRoom();
 
+	CRoom::player_t players = room->GetPlayerList();
 	CRoom::player_t playerList = room->GetPlayerList();
 	char sendBuffer[1000];
 	char* tempBuffer = sendBuffer;
 
 	int size = playerList.size() * sizeof(SOCKADDR_IN);
+
+	std::vector<CPlayer*>::iterator iter = players.begin();
+	std::vector<CPlayer*>::iterator iterEnd = players.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		(*iter)->SetReady(0);
+	}
 
 	*(USHORT*)tempBuffer = 6;
 	tempBuffer += sizeof(USHORT);
@@ -371,7 +387,7 @@ void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)
 	char sendBuffer[20];
 	char* tempBuffer = sendBuffer;
 
-	*(USHORT*)tempBuffer = 12;
+	*(USHORT*)tempBuffer = 10;
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = CS_PT_PLAYERINFO;
 	tempBuffer += sizeof(USHORT);
@@ -380,8 +396,6 @@ void CPacketHandler::Handle_PlayerInfo(CPlayer* _player)
 	*(USHORT*)tempBuffer = _player->GetReady();
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = _player->GetNumber();
-	tempBuffer += sizeof(USHORT);
-	*(USHORT*)tempBuffer = _player->GetTeam();
 	tempBuffer += sizeof(USHORT);
 
 	_player->Send(sendBuffer, tempBuffer - sendBuffer);
@@ -394,7 +408,7 @@ void CPacketHandler::Handle_SockAddr(CPlayer* _player)
 
 	SOCKADDR_IN addr = _player->GetAddr();
 
-	*(USHORT*)tempBuffer = 2 + 2 + sizeof(UINT) + 2;
+	*(USHORT*)tempBuffer = 2 + 2 + sizeof(ULONG) + 2 + sizeof(UINT);
 	tempBuffer += sizeof(USHORT);
 	*(USHORT*)tempBuffer = 14;
 	tempBuffer += sizeof(USHORT);
@@ -402,6 +416,8 @@ void CPacketHandler::Handle_SockAddr(CPlayer* _player)
 	tempBuffer += sizeof(ULONG);
 	*(USHORT*)tempBuffer = ntohs(addr.sin_port);
 	tempBuffer += sizeof(USHORT);
+	*(UINT*)tempBuffer = _player->GetSourceAddr();
+	tempBuffer += sizeof(UINT);
 
 	_player->Send(sendBuffer, tempBuffer - sendBuffer);
 }
@@ -412,22 +428,18 @@ void CPacketHandler::Handle_AddressAll(CPlayer* _player)
 
 	if (room->AllAddress())
 	{
-		char sendBuffer[200];
+		char sendBuffer[1000];
 		char* tempBuffer = sendBuffer;
 
 		CRoom::player_t players = room->GetPlayerList();
 		std::vector<CPlayer*>::iterator iter = players.begin();
 		std::vector<CPlayer*>::iterator iterEnd = players.end();
 
-		*(USHORT*)tempBuffer = 10 + ((sizeof(UINT) + sizeof(IN_ADDR) + sizeof(USHORT)) * players.size());
+		*(USHORT*)tempBuffer = 6 + ((sizeof(UINT) + sizeof(ULONG) + sizeof(USHORT) + sizeof(UINT) + PLAYER_NAME_MAX) * players.size());
 		tempBuffer += sizeof(USHORT);
-		*(USHORT*)tempBuffer = 15;
+		*(USHORT*)tempBuffer = CS_PT_ALL_ADDR;
 		tempBuffer += sizeof(USHORT);
 		*(USHORT*)tempBuffer = players.size();
-		tempBuffer += sizeof(USHORT);
-		*(USHORT*)tempBuffer = room->GetTeamACount();
-		tempBuffer += sizeof(USHORT);
-		*(USHORT*)tempBuffer = room->GetTeamBCount();
 		tempBuffer += sizeof(USHORT);
 
 
@@ -437,14 +449,56 @@ void CPacketHandler::Handle_AddressAll(CPlayer* _player)
 
 			*(UINT*)tempBuffer = (*iter)->GetSocket();
 			tempBuffer += sizeof(UINT);
-			*(IN_ADDR*)tempBuffer = addr.sin_addr;
-			tempBuffer += sizeof(IN_ADDR);
+			*(ULONG*)tempBuffer = addr.sin_addr.S_un.S_addr;
+			tempBuffer += sizeof(ULONG);
 			*(USHORT*)tempBuffer = ntohs(addr.sin_port);
 			tempBuffer += sizeof(USHORT);
+			*(UINT*)tempBuffer = (*iter)->GetSourceAddr();
+			tempBuffer += sizeof(UINT);
+			memcpy(tempBuffer, (*iter)->GetName(), PLAYER_NAME_MAX);
+			tempBuffer += PLAYER_NAME_MAX;
 		}
 
 		room->SendAll(sendBuffer, tempBuffer - sendBuffer);
 	}
+}
+
+void CPacketHandler::Handle_GameOver(CPlayer* _player)
+{
+	_player->SetUdp(false);
+}
+
+void CPacketHandler::GameQuit(CPlayer* _player)
+{
+	CRoom* room = _player->GetRoom();
+
+	room->OutPlayer(_player);
+
+	char sendBuffer[10];
+	char* tempBuffer = sendBuffer;
+	*(USHORT*)tempBuffer = 4;
+	tempBuffer += sizeof(USHORT);
+	*(USHORT*)tempBuffer = CS_PT_GAME_QUIT;
+	tempBuffer += sizeof(USHORT);
+
+	room->SendAll(sendBuffer, tempBuffer - sendBuffer);
+}
+
+void CPacketHandler::PlayerQuit(CPlayer* _player)
+{
+	CRoom* room = _player->GetRoom();
+
+	if (room != nullptr)
+	{
+		room->OutPlayer(_player);
+
+		if (room->GetPlayerSize() == 0)
+		{
+			m_pLobby->RemoveRoom(room);
+		}
+	}
+
+	m_pLobby->RemovePlayer(_player);
 }
 
 char* CPacketHandler::GetPacket(CPlayer* _player)

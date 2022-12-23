@@ -39,17 +39,17 @@ void CWorkerThread::RunLoop()
 	{
 		if (!GetQueuedCompletionStatus(hIOCP, &bytesTrans, (PULONG_PTR)&pSession, (LPOVERLAPPED*)&overlapped, INFINITE))
 		{
-			delete pSession;
+			delete pSession; // 갑자기 지우면 안된다.
 			continue;
 		}
 
 		printf("recv ok %ld : %ld \n", pSession->GetSocket(), bytesTrans);
-		if (bytesTrans == 0)
+
+		int state = pSession->RecvEvent(bytesTrans);
+
+		if (state < 0)
 		{
 			delete pSession;
-			continue;
 		}
-
-		pSession->RecvEvent(bytesTrans);
 	}
 }

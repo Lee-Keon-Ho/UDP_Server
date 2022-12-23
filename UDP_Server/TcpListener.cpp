@@ -23,13 +23,15 @@ bool CTcpListener::Init(PCSTR _ip, u_short _port)
 	inet_pton(AF_INET, _ip, &m_addr.sin_addr);
 	m_addr.sin_port = htons(_port);
 
+
+	// start로 볼 수 있다.
 	if (bind(m_listenSocket, (sockaddr*)&m_addr, sizeof(m_addr)) == SOCKET_ERROR)
 	{
 		printf("bind() Error\n");
 		return false;
 	}
 
-	if (listen(m_listenSocket, 5) == SOCKET_ERROR)
+	if (listen(m_listenSocket, SOMAXCONN) == SOCKET_ERROR)
 	{
 		printf("listen() Error\n");
 		return false;

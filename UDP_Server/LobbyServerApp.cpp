@@ -33,7 +33,7 @@ bool CLobbyServerApp::CreateInstance()
 	CIocp::GetInstance();
 	CPacketHandler::GetInstance();
 
-	m_pListener = new CTcpListener();
+	m_pListener = new CTcpListener(); // 예외 처리를 해서 하는 것
 	if (!m_pListener) return false;
 	m_pUdp = new CUdpClient();
 	if (!m_pUdp) return false;
@@ -46,8 +46,8 @@ bool CLobbyServerApp::CreateInstance()
 bool CLobbyServerApp::StartInstance()
 {
 	CPacketHandler::GetInstance()->SetLobby(m_pLobby);
-	if (!m_pListener->Init("112.184.241.149", 30002)) return false;
-	if (!m_pUdp->Init("112.184.241.149", 30001)) return false;
+	if (!m_pListener->Init("183.108.148.83", 30002)) return false;
+	if (!m_pUdp->Init("183.108.148.83", 30001)) return false;
 
 	return true;
 }
@@ -68,6 +68,8 @@ void CLobbyServerApp::RunLoop()
 void CLobbyServerApp::DeleteInstance()
 {
 	if (m_pLobby) { delete m_pLobby; m_pLobby = nullptr; }
+	if (m_pUdp) { delete m_pUdp; m_pUdp = nullptr; }
 	if (m_pListener) { delete m_pListener; m_pListener = nullptr; }
+	
 	WSACleanup();
 }
